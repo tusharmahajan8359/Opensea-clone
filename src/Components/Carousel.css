@@ -1,0 +1,14 @@
+.container-carousel {
+  padding-top: 64px;
+  text-align: center;
+}
+.container-carousel .title {
+  margin: 20px auto 24px;
+}
+.container-carousel .card {
+  border: 0;
+}
+.container-carousel .card:hover {
+  /* box-shadow: 0px 0px 4px 4px var(--bg-acent-light); */
+  box-shadow: 0 0px 4px 2px var(--bg-accent-light);
+}

@@ -1,0 +1,16 @@
+.card > .img-fluid {
+  opacity: 0.75;
+}
+.card .card-tag {
+  position: absolute;
+  top: -2px;
+  right: 10px;
+}
+.notable .card-body-overlay {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  border-radius: calc(0.25rem - 1px);
+}

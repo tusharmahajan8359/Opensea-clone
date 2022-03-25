@@ -1,0 +1,25 @@
+.card-body {
+  display: flex;
+}
+.collection-card {
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  height: 76px;
+  width: fit-content;
+
+  border-bottom: 1px solid var(--bg-accent-light);
+}
+.container-info {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+  min-width: 220px;
+}
+.container-avtar {
+  text-align: center;
+}
+.market-value {
+  min-width: 68px;
+}

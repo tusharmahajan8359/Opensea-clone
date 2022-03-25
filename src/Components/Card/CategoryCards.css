@@ -1,0 +1,25 @@
+.category {
+  text-align: center;
+}
+.category-card {
+  height: auto;
+  border-radius: var(--border-radius);
+  border: 2px solid #333;
+  margin: 1rem auto;
+  cursor: pointer;
+}
+.category-card .card-img {
+  border-top-left-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+}
+.category-card .card-link {
+  text-decoration: none;
+  color: #333;
+  margin: 10px auto;
+  font-size: 24px;
+  font-weight: 500;
+}
+.category-card:hover {
+  box-shadow: 0.1em 0.1em 0.3em 0.4em rgb(0 0 0 / 20%),
+    -0.1em -0.1em 0.3em 0.4em rgb(0 0 0 / 20%);
+}

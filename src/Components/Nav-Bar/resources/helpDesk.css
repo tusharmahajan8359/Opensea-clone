@@ -1,0 +1,20 @@
+.helpDesk-hero {
+  background: linear-gradient(
+      217deg,
+      rgba(255, 0, 0, 0.8),
+      rgba(255, 0, 0, 0) 70.71%
+    ),
+    linear-gradient(127deg, rgba(0, 255, 0, 0.8), rgba(0, 255, 0, 0) 70.71%),
+    linear-gradient(336deg, rgba(0, 0, 255, 0.8), rgba(0, 0, 255, 0) 70.71%),
+    url('./pexels-rodnae-productions-8369590.jpg');
+  background-position: center;
+  background-size: cover;
+}
+
+.title-inner {
+  font-size: 2rem;
+  font-weight: 400;
+}
+.title-inner:hover {
+  font-weight: 500;
+}

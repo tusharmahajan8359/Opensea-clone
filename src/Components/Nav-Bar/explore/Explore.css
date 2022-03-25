@@ -1,0 +1,44 @@
+/*
+      *spacing system
+      2/4/8/12/16/24/32/48/64/80/96/128
+
+      * font size system
+      10/12/14/16/18/20/24/30/36/44/52/62/74/86/98
+    */
+.section-explore {
+  text-align: center;
+}
+.wrapper {
+  margin: 0.5rem auto 0;
+  overflow-x: auto;
+  display: flex;
+  gap: 1.2rem;
+}
+.wrapper > li {
+  list-style: none;
+}
+.wrapper-item {
+  display: inline-block;
+  height: 100%;
+  min-width: fit-content;
+  padding: 1.8rem 1.2rem;
+  text-decoration: none;
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: var(--bg-accent-light);
+  cursor: pointer;
+}
+
+.wrapper-item:hover {
+  filter: brightness(50%);
+}
+
+.container-card {
+  border-top: 1px solid var(--bg-accent-light);
+  padding: 2.4rem 3.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  flex-wrap: wrap;
+  gap: 2.4rem;
+}
