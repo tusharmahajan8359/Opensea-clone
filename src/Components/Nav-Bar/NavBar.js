@@ -11,6 +11,7 @@ import { MyCollection } from "./profile/MyCollection";
 import { CreateNewItems } from "../CreateNewItems";
 import { CreateCollection } from "./profile/CreateCollection";
 import { Wallet } from "../wallet/Wallet";
+import ViewNft from "../NFT/ViewNft";
 
 export default function Navbar(props) {
   const [click, setClick] = useState(false);
@@ -61,15 +62,14 @@ export default function Navbar(props) {
               <NavItem key={item.id} item={item} />
             ))}
             <li className="nav-item dropdown">
-              <Link
+              <a
                 className="nav-link item-title"
-                to="/"
                 id="dropdownMenuLink"
                 aria-expanded="false"
                 onClick={handleWallet}
               >
                 wallet
-              </Link>
+              </a>
             </li>
           </ul>
         </div>
@@ -81,7 +81,7 @@ export default function Navbar(props) {
       )}
 
       <Switch>
-        <Route path="/Explore">
+        <Route path="/Explore" exact>
           <Explore />
         </Route>
         <Route path="/Help center">
@@ -96,6 +96,9 @@ export default function Navbar(props) {
 
         <Route path="/my collections/create" exact>
           <CreateCollection />
+        </Route>
+        <Route path="/Explore/Nft" exact>
+          <ViewNft />
         </Route>
       </Switch>
     </>

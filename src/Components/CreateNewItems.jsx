@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
 import Collection from "../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const collectionAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
 
 const SAMPLE_TOKEN_URI = "http://test.com";
 
@@ -49,7 +49,7 @@ export const CreateNewItems = () => {
     stateData.then((log) => setCollections(log));
   }, [currentAccount]);
 
-  window.ethereum.on("accountsChanged", async function (accounts) {
+  window.ethereum.on("accountsChanged", async function () {
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",
     });
