@@ -15,6 +15,9 @@ import { useState } from "react";
 import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
 import { isDecodedCreateTrace } from "hardhat/internal/hardhat-network/stack-traces/message-trace";
+import SellModal from "../modal/SellModal"
+import LowerPriceModal from "../modal/LowerPriceModal"
+import SendNftModal from "../modal/SendNftModal"
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -25,6 +28,10 @@ const ViewNft = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [itemStatus, setItemStatus] = useState(false);
   const [currentPrice, setCurrentPrice] = useState();
+
+  const [sellModal,setSellModal]=useState(false);
+  const [lowerpriceModal,setLowerPriceModal]=useState(false);
+  const [sendnftmodal,setSendNftModal]=useState(false);
 
   const TOKENID = 1;
 
@@ -63,7 +70,10 @@ const ViewNft = () => {
     setCurrentAccount(account[0]);
   });
 
-  const sendNFT = async () => {
+  const sendNFT = async (add) => {
+     alert(add)
+    setSendNftModal(false)
+
     await contract.transferFrom(
       "0xE71BcAa29294A56c7aef3FB419831a6447Df749b",
       "0xCd45CB5F3f316900899A276E5b066e19B188ef58",
@@ -74,8 +84,12 @@ const ViewNft = () => {
       window.location.reload();
     });
   };
+  
 
-  const listForSale = async () => {
+  const listForSale = async (selldata) => {
+     
+    setSellModal(false)
+    
     await marketContract.createMarketItem(
       TOKENID,
       ethers.utils.parseEther("1"),
@@ -147,9 +161,14 @@ const ViewNft = () => {
                     className="btn btn-outline-primary btn-lg mx-3"
                     href="#"
                     role="button"
+                     onClick={()=>setLowerPriceModal(true)}
                   >
                     Lower Price
                   </a>
+                  {lowerpriceModal && <LowerPriceModal  show={lowerpriceModal} 
+                                 handleClose={setLowerPriceModal} 
+                                //  listForSale={LowerPrice}
+                                 />}
                 </div>
               ) : (
                 <div>
@@ -165,10 +184,15 @@ const ViewNft = () => {
                     className="btn btn-outline-primary btn-lg mx-3"
                     href="#"
                     role="button"
-                    onClick={listForSale}
+                    // onClick={listForSale}
+                    onClick={()=>setSellModal(true)}
                   >
                     Sell
                   </a>
+                  {sellModal && <SellModal  show={sellModal} 
+                                 handleClose={setSellModal} 
+                                 listForSale={listForSale}
+                                 />}
                 </div>
               )}
             </div>
@@ -277,13 +301,18 @@ const ViewNft = () => {
                       <div></div>
                     ) : (
                       <button
-                        onClick={sendNFT}
+                        onClick={()=>setSendNftModal(true)}
                         type="button"
                         className="btn btn-outline-secondary"
                       >
                         <FiSend size={18} />
                       </button>
+                     
                     )}
+                    {sendnftmodal && <SendNftModal show={sendnftmodal} 
+                                 handleClose={setSendNftModal} 
+                                 sendNFT={sendNFT}
+                                 />}
 
                     <button type="button" className="btn btn-outline-secondary">
                       <BsShareFill size={18} />
