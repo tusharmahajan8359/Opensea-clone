@@ -14,6 +14,7 @@ import { ethers } from "ethers";
 import { useState } from "react";
 import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
+import { isDecodedCreateTrace } from "hardhat/internal/hardhat-network/stack-traces/message-trace";
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -25,7 +26,7 @@ const ViewNft = () => {
   const [itemStatus, setItemStatus] = useState(false);
   const [currentPrice, setCurrentPrice] = useState();
 
-  const TOKENID = 2;
+  const TOKENID = 1;
 
   let tokenOwner;
   let provider;
@@ -272,13 +273,18 @@ const ViewNft = () => {
                     role="group"
                     aria-label="Basic outlined example"
                   >
-                    <button
-                      onClick={sendNFT}
-                      type="button"
-                      className="btn btn-outline-secondary"
-                    >
-                      <FiSend size={18} />
-                    </button>
+                    {isDisabled ? (
+                      <div></div>
+                    ) : (
+                      <button
+                        onClick={sendNFT}
+                        type="button"
+                        className="btn btn-outline-secondary"
+                      >
+                        <FiSend size={18} />
+                      </button>
+                    )}
+
                     <button type="button" className="btn btn-outline-secondary">
                       <BsShareFill size={18} />
                     </button>
