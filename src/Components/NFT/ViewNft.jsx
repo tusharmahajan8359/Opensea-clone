@@ -15,8 +15,8 @@ import { useState } from "react";
 import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
 
-const collectionAddress = "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318";
-const marketAddress = "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6";
+const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 const ViewNft = () => {
   const [owner, setOwner] = useState("");
@@ -78,7 +78,7 @@ const ViewNft = () => {
     await marketContract.createMarketItem(
       TOKENID,
       ethers.utils.parseEther("1"),
-      "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318",
+      "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       { value: ethers.utils.parseEther("0.25") }
     );
     await marketContract.on("ItemListed", (tokenId, price) => {
@@ -90,7 +90,7 @@ const ViewNft = () => {
   const cancelListing = async () => {
     await marketContract.cancelListing(
       TOKENID,
-      "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
+      "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     );
     await marketContract.on("CancelListing", (tokenId) => {
       setItemStatus(false);
@@ -102,7 +102,7 @@ const ViewNft = () => {
     await marketContract.lowerPrice(
       TOKENID,
       ethers.utils.parseEther("0.01"),
-      "0x8A791620dd6260079BF849Dc5567aDC3F2FdC318"
+      "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     );
   };
 
