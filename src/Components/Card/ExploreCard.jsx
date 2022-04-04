@@ -17,12 +17,6 @@ const ExploreCard = (props) => {
         style={{ height: "18rem" }}
       />
       <div className="body text-center">
-        <img
-          src={props.imgsrc}
-          style={{ width: "6.4rem" }}
-          className="avtar rounded-circle"
-          alt="avtar-img"
-        />
         <h4 className="card-title mt-5 mb-3">{props.title}</h4>
         <p className="author mb-3 fs-4">
           by<span className="text-primary">{props.uname}</span>

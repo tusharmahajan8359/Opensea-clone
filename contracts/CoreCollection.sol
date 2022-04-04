@@ -32,6 +32,9 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
         string externalLink;
     }
 
+    //mapping from collectionId to IPFS link
+    mapping(uint256 => string) public collectionLink;
+
     //mapping from itemId to NFT Structure
     mapping(uint256 => NFT) public NFTs;
 
@@ -86,7 +89,10 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
      * @dev function to create a new collection
      * @param _name {string} name of the collection
      */
-    function createCollection(string memory _name) external override {
+    function createCollection(
+        string memory _name,
+        string memory _collectionLink
+    ) external override {
         collectionCounter++;
         uint256 newCollectionId = collectionCounter;
 
@@ -99,6 +105,7 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
 
         collectionIdToUser[newCollectionId] = msg.sender;
         userToCollectionIds[msg.sender].push(newCollectionId);
+        collectionLink[newCollectionId] = _collectionLink;
         emit CollectionCreated(_name, newCollectionId);
     }
 
@@ -150,5 +157,13 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
         returns (uint256[] memory)
     {
         return collections[collectionId].itemIds;
+    }
+
+    function getAllCollections() external view returns (uint256[] memory) {
+        uint256[] memory collectionIds = new uint256[](collectionCounter);
+        for (uint256 i = 1; i <= collectionCounter; i++) {
+            collectionIds[i] = i;
+        }
+        return collectionIds;
     }
 }

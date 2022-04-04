@@ -8,45 +8,16 @@ export const navBarData = {
     {
       id: 1,
       itemTitle: "Explore",
-      dropdownItems: [
-        "All NFTs",
-        "Art",
-        "Collectibles",
-        "Domain Names",
-        "Music",
-        "Photography",
-        "Sports",
-        "Trading Cards",
-        "Utility",
-        "Virtual World",
-      ],
+      dropdownItems: [],
     },
+    
     {
       id: 2,
-      itemTitle: "Stats",
-      dropdownItems: ["Rankings", "Activity"],
-    },
-    {
-      id: 3,
-      itemTitle: "Resources",
-      dropdownItems: [
-        "Help Center",
-        "Platform Status",
-        "Partners",
-        "Gas-Free Marketplace",
-        "Taxes",
-        "Blog",
-        "Docs",
-        "Newsletters",
-      ],
-    },
-    {
-      id: 4,
       itemTitle: "Create",
       dropdownItems: [],
     },
     {
-      id: 5,
+      id: 3,
       itemTitle: "Login",
       dropdownItems: [
         "Profile",

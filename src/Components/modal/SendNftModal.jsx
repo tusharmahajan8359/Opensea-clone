@@ -1,7 +1,7 @@
 import React,{useRef} from 'react'
 import {Button,Modal} from "react-bootstrap"
 const SendNftModal = ({handleClose,sendNFT,show}) => {
-  const sendaddress=useRef();
+  const _recepient = useRef();
   return (
     <Modal show={show} onHide={handleClose}>
           <Modal.Header closeButton>
@@ -9,14 +9,14 @@ const SendNftModal = ({handleClose,sendNFT,show}) => {
           </Modal.Header>
           <Modal.Body>
           
-          <input type="text" placeholder="enter receiver address" ref={sendaddress}/>
+          <input type="text" placeholder="enter receiver address" ref={_recepient}/>
 
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={()=>handleClose(false)}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={()=>sendNFT(sendaddress.current.value)}>
+            <Button variant="primary" onClick={()=>sendNFT(_recepient.current.value)}>
               Send NFT
             </Button>
           </Modal.Footer>

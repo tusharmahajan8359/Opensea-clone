@@ -1,12 +1,9 @@
 import React, { useEffect } from "react";
 import "./ViewNFT.css";
 import {
-  BsSuitHeart,
-  BsSuitHeartFill,
   BsFillTagsFill,
   BsThreeDotsVertical,
   BsShareFill,
-  BsArrowClockwise,
 } from "react-icons/bs";
 import { FaEthereum, FaWallet } from "react-icons/fa";
 import { FiSend } from "react-icons/fi";
@@ -14,10 +11,9 @@ import { ethers } from "ethers";
 import { useState } from "react";
 import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
-import { isDecodedCreateTrace } from "hardhat/internal/hardhat-network/stack-traces/message-trace";
-import SellModal from "../modal/SellModal"
-import LowerPriceModal from "../modal/LowerPriceModal"
-import SendNftModal from "../modal/SendNftModal"
+import SellModal from "../modal/SellModal";
+import LowerPriceModal from "../modal/LowerPriceModal";
+import SendNftModal from "../modal/SendNftModal";
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -27,12 +23,17 @@ const ViewNft = () => {
   const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
   const [itemStatus, setItemStatus] = useState(false);
-  const [currentPrice, setCurrentPrice] = useState();
+  const [nftData, setNftData] = useState({
+    collectionName: "",
+    nftName: "",
+    currentPrice: "",
+  });
 
-  const [sellModal,setSellModal]=useState(false);
-  const [lowerpriceModal,setLowerPriceModal]=useState(false);
-  const [sendnftmodal,setSendNftModal]=useState(false);
+  const [sellModal, setSellModal] = useState(false);
+  const [lowerpriceModal, setLowerPriceModal] = useState(false);
+  const [sendnftmodal, setSendNftModal] = useState(false);
 
+  const COLLECTIONID = 1;
   const TOKENID = 1;
 
   let tokenOwner;
@@ -51,8 +52,19 @@ const ViewNft = () => {
 
     const _account = await func();
     const _status = await marketContract.idToOnSale(TOKENID);
+    const _currentPrice = await marketContract.idToPrice(TOKENID);
+    const price = ethers.utils.formatEther(_currentPrice).toString();
+    const _collectionName = await contract.collections(COLLECTIONID).name;
+    console.log(_collectionName);
+    const _nftName = await contract.NFTs(TOKENID).nft_name;
+
     setCurrentAccount(_account[0]);
     setItemStatus(_status);
+    setNftData({
+      collectionName: _collectionName,
+      nftName: _nftName,
+      currentPrice: price,
+    });
 
     if (currentAccount === tokenOwner) {
       setOwner("You");
@@ -61,64 +73,67 @@ const ViewNft = () => {
       setOwner(tokenOwner);
       setIsDisabled(true);
     }
-    // console.log(itemStatus);
-  }, [currentAccount, itemStatus]);
+  }, [owner, currentAccount, itemStatus]);
 
   window.ethereum.on("accountsChanged", async function () {
     // const provider = new ethers.providers.Web3Provider(window.ethereum);
     account = await provider.listAccounts();
     setCurrentAccount(account[0]);
   });
+/**
+ *
+ *
+ * @param {*} _recepient
+ */
+const sendNFT = async (_recepient) => {
+    setSendNftModal(false);
+    tokenOwner = await contract.ownerOf(TOKENID);
 
-  const sendNFT = async (add) => {
-     alert(add)
-    setSendNftModal(false)
-
-    await contract.transferFrom(
-      "0xE71BcAa29294A56c7aef3FB419831a6447Df749b",
-      "0xCd45CB5F3f316900899A276E5b066e19B188ef58",
-      1
+    const transaction = await contract.transferFrom(
+      tokenOwner,
+      _recepient,
+      TOKENID
     );
-    await contract.on("Transfer", (from, to, tokenId) => {
-      console.log("hello");
-      window.location.reload();
-    });
+    await transaction.wait();
+    console.log("transfer complete");
+    setOwner(_recepient);
   };
-  
-
   const listForSale = async (selldata) => {
-     
-    setSellModal(false)
-    
-    await marketContract.createMarketItem(
+    setSellModal(false);
+
+    const tx = await marketContract.createMarketItem(
       TOKENID,
-      ethers.utils.parseEther("1"),
+      ethers.utils.parseEther(selldata),
       "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       { value: ethers.utils.parseEther("0.25") }
     );
-    await marketContract.on("ItemListed", (tokenId, price) => {
-      setItemStatus(true);
-      console.log("Status: ", itemStatus);
-    });
+    await tx.wait();
+    setNftData({ ...nftData, currentPrice: selldata.toString() });
+    setItemStatus(true);
+    console.log("Status: ", itemStatus);
   };
 
   const cancelListing = async () => {
-    await marketContract.cancelListing(
+    const tx = await marketContract.cancelListing(
       TOKENID,
       "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     );
-    await marketContract.on("CancelListing", (tokenId) => {
-      setItemStatus(false);
-      console.log("Status: ", itemStatus);
-    });
+    await tx.wait();
+    setItemStatus(false);
+    console.log("Status: ", itemStatus);
   };
 
-  const lowerPrice = async () => {
-    await marketContract.lowerPrice(
+  const lowerPrice = async (_newPrice) => {
+    setLowerPriceModal(false)
+    console.log("Price Before: ", await marketContract.idToPrice(TOKENID));
+    const transaction = await marketContract.lowerPrice(
       TOKENID,
-      ethers.utils.parseEther("0.01"),
+      ethers.utils.parseEther(_newPrice),
       "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     );
+    await transaction.wait();
+    console.log("Price after: ", await marketContract.idToPrice(TOKENID));
+    setNftData({ ...nftData, currentPrice: _newPrice.toString() });
   };
 
   const getItemStatus = async () => {};
@@ -145,54 +160,44 @@ const ViewNft = () => {
                     className="btn btn-outline-primary btn-lg mx-3"
                     href="#"
                     role="button"
-                    onClick={() => console.log(itemStatus)}
-                  >
-                    Edit
-                  </a>
-                  <a
-                    className="btn btn-outline-primary btn-lg mx-3"
-                    href="#"
-                    role="button"
                     onClick={cancelListing}
                   >
                     Cancel Listing
                   </a>
                   <a
-                    className="btn btn-outline-primary btn-lg mx-3"
+                    className="btn btn-primary btn-lg mx-3"
                     href="#"
                     role="button"
-                     onClick={()=>setLowerPriceModal(true)}
+                    onClick={() => setLowerPriceModal(true)}
                   >
                     Lower Price
                   </a>
-                  {lowerpriceModal && <LowerPriceModal  show={lowerpriceModal} 
-                                 handleClose={setLowerPriceModal} 
-                                //  listForSale={LowerPrice}
-                                 />}
+                  {lowerpriceModal && (
+                    <LowerPriceModal
+                      show={lowerpriceModal}
+                      handleClose={setLowerPriceModal}
+                      lowerPrice={lowerPrice}
+                    />
+                  )}
                 </div>
               ) : (
                 <div>
                   <a
-                    className="btn btn-outline-primary btn-lg mx-3"
-                    href="#"
-                    role="button"
-                    onClick={() => console.log(itemStatus)}
-                  >
-                    Edit
-                  </a>
-                  <a
-                    className="btn btn-outline-primary btn-lg mx-3"
+                    className="btn btn-primary btn-lg mx-3"
                     href="#"
                     role="button"
                     // onClick={listForSale}
-                    onClick={()=>setSellModal(true)}
+                    onClick={() => setSellModal(true)}
                   >
-                    Sell
+                    List for Sale
                   </a>
-                  {sellModal && <SellModal  show={sellModal} 
-                                 handleClose={setSellModal} 
-                                 listForSale={listForSale}
-                                 />}
+                  {sellModal && (
+                    <SellModal
+                      show={sellModal}
+                      handleClose={setSellModal}
+                      listForSale={listForSale}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -299,20 +304,26 @@ const ViewNft = () => {
                   >
                     {isDisabled ? (
                       <div></div>
+                    ) : itemStatus ? (
+                      <div />
                     ) : (
-                      <button
-                        onClick={()=>setSendNftModal(true)}
-                        type="button"
-                        className="btn btn-outline-secondary"
-                      >
-                        <FiSend size={18} />
-                      </button>
-                     
+                      <div>
+                        <button
+                          onClick={() => setSendNftModal(true)}
+                          type="button"
+                          className="btn btn-outline-secondary"
+                        >
+                          <FiSend size={18} />
+                        </button>
+                      </div>
                     )}
-                    {sendnftmodal && <SendNftModal show={sendnftmodal} 
-                                 handleClose={setSendNftModal} 
-                                 sendNFT={sendNFT}
-                                 />}
+                    {sendnftmodal && (
+                      <SendNftModal
+                        show={sendnftmodal}
+                        handleClose={setSendNftModal}
+                        sendNFT={sendNFT}
+                      />
+                    )}
 
                     <button type="button" className="btn btn-outline-secondary">
                       <BsShareFill size={18} />
@@ -334,10 +345,18 @@ const ViewNft = () => {
               <div className="card pricing-card">
                 <div className="card-header fs-3">Current Price</div>
                 <div className="card-body">
-                  <p className="text">
-                    <FaEthereum size={28} />
-                    <span className="price fs-3">1</span>
-                  </p>
+                  {itemStatus ? (
+                    <div>
+                      <p className="text">
+                        <FaEthereum size={28} />
+                        <span className="price fs-3">
+                          {nftData.currentPrice.toString()}
+                        </span>
+                      </p>
+                    </div>
+                  ) : (
+                    <div />
+                  )}
                   {isDisabled ? (
                     <div>
                       <a href="#" className="btn btn-lg btn-primary m-3">

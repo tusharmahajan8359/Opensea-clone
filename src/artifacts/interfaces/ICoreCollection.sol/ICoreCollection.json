@@ -9,6 +9,11 @@
           "internalType": "string",
           "name": "_name",
           "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_collectionLink",
+          "type": "string"
         }
       ],
       "name": "createCollection",

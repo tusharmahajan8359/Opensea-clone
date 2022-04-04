@@ -1,18 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { IoWalletSharp, IoImages } from "react-icons/io5";
+import "./Features.css";
 
 export default function Feature(props) {
-  // const Icon = () => {
-  //   return <IoImages />
-  // }
   return (
     <div className="feature-card">
-      <IoWalletSharp className="my-3" size={44} />
+      <span className={`feature-icon fa-3x`}>
+        <i className={props.icon}></i>
+      </span>
 
-      <h5 className="feature-title fs-2 mb-4">{props.title}</h5>
+      <h2 className="feature-title">{props.title}</h2>
 
-      <p className="feature-text fs-3 lh-base my-3">{props.content}</p>
+      <h5 className="feature-text">{props.content}</h5>
     </div>
   );
 }

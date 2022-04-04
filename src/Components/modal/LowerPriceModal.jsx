@@ -1,24 +1,28 @@
-import React from 'react'
-import {Button,Modal} from "react-bootstrap"
-const LowerPeiceModal = ({handleClose,listForSale,show}) => {
+import React, { useRef } from "react";
+import { Button, Modal } from "react-bootstrap";
+const LowerPeiceModal = ({ handleClose, lowerPrice, show }) => {
+  const newPrice = useRef();
   return (
     <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title> Lower Price Modal heading</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={()=>handleClose(false)}>
-              Close
-            </Button>
-            <Button variant="primary" onClick={()=>handleClose(false)}>
-             Show
-            </Button>
-          </Modal.Footer>
-        </Modal>
-  )
-}
-
-
+      <Modal.Header closeButton>
+        <Modal.Title> Set the Lowered Price</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <input type="text" placeholder="Enter the Amount" ref={newPrice} />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
+          Close
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => lowerPrice(newPrice.current.value)}
+        >
+          Show
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
 
 export default LowerPeiceModal;

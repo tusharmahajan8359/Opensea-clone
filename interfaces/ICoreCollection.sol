@@ -12,7 +12,7 @@ interface ICoreCollection {
      * @dev function to create a new collection
      * @param _name {string} name of the collection
      */
-    function createCollection(string memory _name) external;
+    function createCollection(string memory _name, string memory _collectionLink) external;
 
     /**
      * @dev function to create a new NFT and add it to the collection
