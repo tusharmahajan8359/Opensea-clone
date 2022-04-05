@@ -21,7 +21,9 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
         uint256 collectionId;
         string name;
         address creator;
+        string collectionLink;
         uint256[] itemIds;
+        
     }
 
     //NFT Structure
@@ -33,7 +35,7 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
     }
 
     //mapping from collectionId to IPFS link
-    mapping(uint256 => string) public collectionLink;
+    // mapping(uint256 => string) public collectionLink;
 
     //mapping from itemId to NFT Structure
     mapping(uint256 => NFT) public NFTs;
@@ -100,12 +102,13 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
             collectionId: newCollectionId,
             name: _name,
             creator: msg.sender,
-            itemIds: new uint256[](0)
+            itemIds: new uint256[](0),
+            collectionLink :_collectionLink
         });
 
         collectionIdToUser[newCollectionId] = msg.sender;
         userToCollectionIds[msg.sender].push(newCollectionId);
-        collectionLink[newCollectionId] = _collectionLink;
+        // collectionLink[newCollectionId] = _collectionLink;
         emit CollectionCreated(_name, newCollectionId);
     }
 

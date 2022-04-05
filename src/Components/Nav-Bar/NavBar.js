@@ -10,6 +10,7 @@ import { Explore } from "./explore/Explore";
 import { MyCollection } from "./profile/MyCollection";
 import { CreateNewItems } from "../CreateNewItems";
 import { CreateCollection } from "./profile/CreateCollection";
+import CollectionDetails  from "./profile/CollectionDetails";
 import { Wallet } from "../wallet/Wallet";
 import ViewNft from "../NFT/ViewNft";
 
@@ -100,6 +101,10 @@ export default function Navbar(props) {
         <Route path="/Explore/Nft" exact>
           <ViewNft />
         </Route>
+        <Route path="/CollectionDetails" exact>
+           <CollectionDetails />
+        </Route>
+        
       </Switch>
     </>
   );

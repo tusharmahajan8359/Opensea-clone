@@ -1,29 +1,35 @@
 import React from "react";
-import { Switch, Router, Route, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import { ethers } from "ethers";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
-import ExploreCard from "../../Card/ExploreCard";
+import MyCollectionCard from "../../Card/MyCollectionCard";
+
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
 export const MyCollection = () => {
   const [currentAccount, setCurrentAccount] = useState("");
-
+  const [collectionList, setCollectionList] = useState([]);
   let provider;
   let account;
-  let collectionList = [];
+
+  const onPageLoad = async () => {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    account = await provider.listAccounts();
+    setCurrentAccount(account[0]);
+    setCollectionList([]);
+  };
 
   useEffect(async () => {
-    const onPageLoad = async () => {
-      provider = new ethers.providers.Web3Provider(window.ethereum);
-      account = await provider.listAccounts();
-      setCurrentAccount(account[0]);
-    };
+
     await onPageLoad();
     fetchMyCollections();
+
   }, [currentAccount]);
+
+
 
   const fetchMyCollections = async () => {
     const signer = provider.getSigner();
@@ -34,33 +40,43 @@ export const MyCollection = () => {
     );
 
     try {
+
       const collections = await contract.getCollectionIds(currentAccount);
 
       for (let i = 0; i < collections.length; i++) {
+
         const collection = await contract.collections(collections[i]);
-        const ipfsLink = await contract.collectionLink(collections[0]);
+
+        const ipfsLink = collection[3]
+
         const obj = {
           id: collection[0],
           name: collection[1],
           creator: collection[2],
         };
+
         fetch(ipfsLink)
           .then((res) => res.json())
           .then((data) => {
+
             obj.description = data.description;
             obj.image = data.image;
+            setCollectionList((old) => {
+              return [...old, obj];
+            })
           });
-        collectionList.push(obj);
+
       }
-      console.log(collectionList);
-    } catch (err) {}
+
+    } catch (err) { }
   };
 
   window.ethereum.on("accountsChanged", async () => {
-    const _newProvider = new ethers.providers.Web3Provider(window.ethereum);
-    account = await _newProvider.listAccounts();
-    setCurrentAccount(account[0]);
+
+    await onPageLoad();
+
   });
+
   return (
     <div className="container px-5 mb-5">
       <h1 className="title fw-bold py-5">My Collections</h1>
@@ -82,6 +98,18 @@ export const MyCollection = () => {
       <button type="button" className="btn btn-outline-primary btn-lg p-3 px-5">
         <BsThreeDotsVertical size={24} />
       </button>
+
+      <div className="row row-cols-md-3 gy-3 p-0 mt-5">
+
+        {collectionList.map((list, index) => {
+
+          return (
+            <MyCollectionCard key={index} collection={list} />
+          );
+        })}
+
+      </div>
+
     </div>
   );
 };

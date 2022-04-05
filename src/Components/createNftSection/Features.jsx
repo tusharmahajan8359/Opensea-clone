@@ -3,7 +3,7 @@ import dataFeature from "./FeaturesData";
 import Feature from "./Feature";
 export const Features = () => {
   return (
-    <>
+    <div className="container">
       <center>
         <h1 className="title my-3">Create and sell your Features</h1>
       </center>
@@ -20,6 +20,6 @@ export const Features = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };

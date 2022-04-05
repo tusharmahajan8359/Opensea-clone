@@ -6,12 +6,14 @@ import Hero from "./Components/Hero/Hero";
 import Footer from "./Components/footer/Footer";
 import { Features } from "./Components/createNftSection/Features";
 import { useEffect, useState } from "react";
-
+import {Provider} from "react-redux"
+import store from "./store"
 function App() {
   const [state, setState] = useState({ isConnected: false });
 
   return (
     <React.Fragment>
+      <Provider store={store}>
       <Navbar stateData={state} setStateData={setState} />
 
       <Switch>
@@ -24,6 +26,7 @@ function App() {
       <footer className="footer">
         <Footer />
       </footer>
+      </Provider>
     </React.Fragment>
   );
 }

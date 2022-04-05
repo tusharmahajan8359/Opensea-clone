@@ -34,6 +34,7 @@
 }
 
 .container-card {
+  margin-top: 3rem;
   border-top: 1px solid var(--bg-accent-light);
   padding: 2.4rem 3.6rem;
   display: flex;
