@@ -10,7 +10,7 @@ export const navBarData = {
       itemTitle: "Explore",
       dropdownItems: [],
     },
-    
+
     {
       id: 2,
       itemTitle: "Create",
@@ -18,14 +18,8 @@ export const navBarData = {
     },
     {
       id: 3,
-      itemTitle: "Login",
-      dropdownItems: [
-        "Profile",
-        "Watchlist",
-        "My Collections",
-        "Settings",
-        "Log Out",
-      ],
+      itemTitle: "Profile",
+      dropdownItems: ["My Collections"],
     },
   ],
   // showDropdown:{this.showDropdownHadler},

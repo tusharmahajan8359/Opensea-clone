@@ -1,11 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import MyCollectionCard from "../../Card/MyCollectionCard";
-
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
@@ -23,13 +22,9 @@ export const MyCollection = () => {
   };
 
   useEffect(async () => {
-
     await onPageLoad();
     fetchMyCollections();
-
   }, [currentAccount]);
-
-
 
   const fetchMyCollections = async () => {
     const signer = provider.getSigner();
@@ -40,15 +35,13 @@ export const MyCollection = () => {
     );
 
     try {
-
       const collections = await contract.getCollectionIds(currentAccount);
 
       for (let i = 0; i < collections.length; i++) {
-
         const collection = await contract.collections(collections[i]);
         const items = await contract.getItems(collection[0]);
         const itemCount = items.length;
-        const ipfsLink = collection[3]
+        const ipfsLink = collection[3];
 
         const obj = {
           id: collection[0],
@@ -60,23 +53,18 @@ export const MyCollection = () => {
         fetch(ipfsLink)
           .then((res) => res.json())
           .then((data) => {
-
             obj.description = data.description;
             obj.image = data.image;
             setCollectionList((old) => {
               return [...old, obj];
-            })
+            });
           });
-         
       }
-
-    } catch (err) { }
+    } catch (err) {}
   };
 
   window.ethereum.on("accountsChanged", async () => {
-
     await onPageLoad();
-
   });
 
   return (
@@ -102,16 +90,10 @@ export const MyCollection = () => {
       </button>
 
       <div className="row row-cols-md-3 gy-3 p-0 mt-5">
-
         {collectionList.map((list, index) => {
-
-          return (
-            <MyCollectionCard key={index} collection={list} />
-          );
+          return <MyCollectionCard key={index} collection={list} />;
         })}
-
       </div>
-
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React from "react";
 import "./CreateNewItem.css";
 import { FaAsterisk, FaPlus, FaStar } from "react-icons/fa";
 import { useState, useEffect, useRef } from "react";
-import {useHistory} from "react-router-dom"
+import { useHistory } from "react-router-dom";
 import { ethers } from "ethers";
 import Collection from "../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import { create as ipfsHttpClient } from "ipfs-http-client";
@@ -111,11 +111,7 @@ export const CreateNewItems = () => {
   }, [selectedCollection]);
 
   const handleButton = () => {
-    setIsDisabled(
-      Boolean(
-        !(selectedCollection && fileUrl && formInput.name)
-      )
-    );
+    setIsDisabled(Boolean(!(selectedCollection && fileUrl && formInput.name)));
   };
 
   const createNFT = async () => {
@@ -127,47 +123,34 @@ export const CreateNewItems = () => {
       signer
     );
 
-    const url = await uploadToIPFS()
+    const url = await uploadToIPFS();
     await contract
-      .createNFT(
-        formInput.name,
-        selectedCollection,
-        fileUrl,
-        url
-      )
+      .createNFT(formInput.name, selectedCollection, fileUrl, url)
       .then(async (transaction) => {
         const tx = await transaction.wait();
         let event = await tx.events.find(
           (event) => event.event === "NFTCreated"
         );
         console.log("Item ID: ", parseInt(event.args[0]._hex, 16));
-        ItemId=parseInt(event.args[0]._hex, 16);
-        
+        ItemId = parseInt(event.args[0]._hex, 16);
       });
 
-      
-      const item = await contract.NFTs(ItemId);
+    const item = await contract.NFTs(ItemId);
 
-      const ipfsLink = await contract.tokenURI(item[0]);
+    const ipfsLink = await contract.tokenURI(item[0]);
 
-      const obj = {
-        id: item[0],
-        name: item[1],
-        creator: item[2],
-      };
-      fetch(ipfsLink)
-        .then((res) => res.json())
-        .then((data) => {
-          obj.description = data.description;
-          obj.image = data.image;
-          histroy.push("/Explore/Nft", { state: obj});
-       })
-       
-
-
-
-
-     
+    const obj = {
+      id: item[0],
+      name: item[1],
+      creator: item[2],
+    };
+    fetch(ipfsLink)
+      .then((res) => res.json())
+      .then((data) => {
+        obj.description = data.description;
+        obj.image = data.image;
+        histroy.push("/Explore/Nft", { state: obj });
+      });
   };
 
   // const getCollections = async () => {
@@ -199,9 +182,7 @@ export const CreateNewItems = () => {
           Image
           <FaAsterisk className="text-danger m-2" size={8} />
         </label>
-        <p className="sub-title text-muted">
-          Max size: 100 MB
-        </p>
+        <p className="sub-title text-muted">Max size: 100 MB</p>
         <input
           type="file"
           name="Asset"
@@ -222,7 +203,9 @@ export const CreateNewItems = () => {
           className="form-control form-control-lg"
           type="text"
           required
-          onChange={(e) => updateFormInput({ ...formInput, name: e.target.value })}
+          onChange={(e) =>
+            updateFormInput({ ...formInput, name: e.target.value })
+          }
           placeholder="item name"
         />
       </div>
@@ -238,7 +221,7 @@ export const CreateNewItems = () => {
           className="form-control form-control-lg"
           type="text"
           disabled={true}
-          placeholder= {fileUrl}
+          placeholder={fileUrl}
           aria-label=".form-control-lg example"
         />
       </div>
@@ -255,7 +238,9 @@ export const CreateNewItems = () => {
           className="form-control"
           id="description"
           placeholder="Provide a detailed description of your item."
-          onChange={(e) => updateFormInput({ ...formInput, description: e.target.value })}
+          onChange={(e) =>
+            updateFormInput({ ...formInput, description: e.target.value })
+          }
           rows="4"
           columns="5"
         ></textarea>

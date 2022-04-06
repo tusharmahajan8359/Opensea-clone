@@ -6,7 +6,6 @@ const MyCollectionCard = ({ collection }) => {
   const history = useHistory();
 
   const handleClick = () => {
-
     console.log("my clicked collection", collection);
 
     history.push("/CollectionDetails", { state: collection });

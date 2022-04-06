@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom";
 import "./ViewNFT.css";
 import {
   BsFillTagsFill,
@@ -20,10 +20,8 @@ const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 const ViewNft = () => {
-
   let location = useLocation();
   let { state } = location.state;
-  console.log(state)
   const [owner, setOwner] = useState("");
   const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
@@ -40,8 +38,8 @@ const ViewNft = () => {
   const [lowerpriceModal, setLowerPriceModal] = useState(false);
   const [sendnftmodal, setSendNftModal] = useState(false);
 
-  const COLLECTIONID = 1;
-  const TOKENID = 1;
+  const COLLECTIONID = parseInt(state.collectionId._hex, 16);
+  const TOKENID = parseInt(state.id._hex, 16);
 
   let tokenOwner;
   let provider;
@@ -64,7 +62,6 @@ const ViewNft = () => {
     const _collectionName = await contract.collections(COLLECTIONID);
     const _nftData = await contract.NFTs(TOKENID);
     const itemSaleStatus = await marketContract.idToOnSale(TOKENID);
-    console.log(await contract.ownerOf(TOKENID));
     fetch(_tokenURI)
       .then((res) => res.json())
       .then((data) => {
@@ -178,7 +175,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => { };
+  const getItemStatus = async () => {};
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -253,8 +250,12 @@ const ViewNft = () => {
               <div className="blockChain-type p-3">
                 <FaEthereum size={28} />
               </div>
-              <div className="nft-container">
-                <img src={nftData.image} alt="" style={{ width: " 100%" }} />
+              <div className="nft-container d-flex justify-content-center align-items-center">
+                <img
+                  src={nftData.image}
+                  alt=""
+                  style={{ height: "100%", width: "auto" }}
+                />
               </div>
             </div>
             <div className="accordion" id="">
@@ -441,98 +442,110 @@ const ViewNft = () => {
                 <div></div>
               )}
 
-<div className="accordion" id="accordionExample">
-      <div className="accordion-item">
-        <h2 className="accordion-header" id="headingTwo">
-          <button
-            className="accordion-button fs-2 collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseTwo"
-            aria-expanded="false"
-            aria-controls="collapseTwo"
-          >
-            Listing
-          </button>
-        </h2>
-        <div
-          id="collapseTwo"
-          className="accordion-collapse collapse"
-          aria-labelledby="headingTwo"
-          data-bs-parent="#accordionExample"
-        >
-          <div className="accordion-body fs-3">
-            <div className="table-responsive-md">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td><button type="button" className="btn btn-primary">Cancel</button></td>
-                  </tr>
-                  
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="accordion-item">
-        <h2 className="accordion-header" id="headingThree">
-          <button
-            className="accordion-button fs-2 collapsed"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#collapseThree"
-            aria-expanded="false"
-            aria-controls="collapseThree"
-          >
-            Offers
-          </button>
-        </h2>
-        <div
-          id="collapseThree"
-          className="accordion-collapse collapse"
-          aria-labelledby="headingThree"
-          data-bs-parent="#accordionExample"
-        >
-          <div className="accordion-body fs-3">
-            <div className="table-responsive-md">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">First</th>
-                    <th scope="col">Last</th>
-                    <th scope="col">Handle</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td><button type="button" className="btn btn-primary">Buy</button></td>
-                  </tr>
-                 
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              <div className="accordion" id="accordionExample">
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingTwo">
+                    <button
+                      className="accordion-button fs-2 collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseTwo"
+                      aria-expanded="false"
+                      aria-controls="collapseTwo"
+                    >
+                      Listing
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseTwo"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingTwo"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body fs-3">
+                      <div className="table-responsive-md">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">First</th>
+                              <th scope="col">Last</th>
+                              <th scope="col">Handle</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">1</th>
+                              <td>Mark</td>
+                              <td>Otto</td>
+                              <td>@mdo</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn btn-primary"
+                                >
+                                  Cancel
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id="headingThree">
+                    <button
+                      className="accordion-button fs-2 collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseThree"
+                      aria-expanded="false"
+                      aria-controls="collapseThree"
+                    >
+                      Offers
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseThree"
+                    className="accordion-collapse collapse"
+                    aria-labelledby="headingThree"
+                    data-bs-parent="#accordionExample"
+                  >
+                    <div className="accordion-body fs-3">
+                      <div className="table-responsive-md">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">First</th>
+                              <th scope="col">Last</th>
+                              <th scope="col">Handle</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <th scope="row">1</th>
+                              <td>Mark</td>
+                              <td>Otto</td>
+                              <td>@mdo</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn btn-primary"
+                                >
+                                  Buy
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -540,6 +553,5 @@ const ViewNft = () => {
     </main>
   );
 };
-
 
 export default ViewNft;

@@ -4,7 +4,6 @@ import {useHistory} from "react-router-dom"
 
 const MyNftCard = ({nftdata}) => {
   const history=useHistory();
-  console.log(nftdata)
   
 const handleViewNft=()=>{
      

@@ -2,7 +2,7 @@ import React from "react";
 import { FaAsterisk } from "react-icons/fa";
 import "./CreateCollection.css";
 import { useState, useRef } from "react";
-import {useHistory,Link} from "react-router-dom"
+import { useHistory, Link } from "react-router-dom";
 import { ethers } from "ethers";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
@@ -16,7 +16,7 @@ export const CreateCollection = () => {
   const [fileUrl, setFileUrl] = useState(null);
   const [description, setDescription] = useState("");
   const _name = useRef();
-  const history=useHistory();
+  const history = useHistory();
 
   async function onFileUpload(e) {
     const file = e.target.files[0];
@@ -74,7 +74,7 @@ export const CreateCollection = () => {
           (event) => event.event === "CollectionCreated"
         );
         console.log("Collection ID: ", parseInt(event.args[1]._hex, 16));
-        history.push("/my Collections")
+        history.push("/my Collections");
       })
       .catch((err) => {
         console.log(err);
@@ -150,14 +150,14 @@ export const CreateCollection = () => {
             </Link>{" "}
             syntax is supported. 0 of 1000 characters used.
           </p>
-          <textareLink
+          <textarea
             className="form-control"
             id="description"
             rows="4"
             onChange={(e) => {
               setDescription(e.target.value);
             }}
-          ></textareLink>
+          ></textarea>
         </div>
 
         <button
