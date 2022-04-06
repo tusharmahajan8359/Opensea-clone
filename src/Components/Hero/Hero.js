@@ -1,4 +1,5 @@
 import React from "react";
+import {Link  }   from "react-router-dom"
 import PropTypes from "prop-types";
 import UserInfo from "../UserInfo";
 import "./Hero.css";
@@ -14,16 +15,16 @@ export default function Hero() {
             <h2 className="heading-primary">{heroData.title}</h2>
             <p className="hero-description">{heroData.text}</p>
             <div className="container-btn">
-              <a href="/" className="btn btn-primary me-5">
+              <Link to="/" className="btn btn-primary me-5">
                 Explore
-              </a>
-              <a href="/" className="btn btn-outline">
+              </Link>
+              <Link to="/" className="btn btn-outline">
                 Create
-              </a>
+              </Link>
             </div>
           </div>
           <div className="col-lg-6 hero-img-container">
-            <div className="nft-img box-shadow cursor-pointer">
+            <div className="nft-img box-shadow cursor-pointer bg-white">
               <img
                 src={heroData.mainImg}
                 className="card-img-top"
@@ -46,9 +47,9 @@ export default function Hero() {
             </div>
           </div>
           <div className="container-bottom py-2">
-            <a href="/" className="text">
+            <Link to="/" className="text">
               learn more about Oasis
-            </a>
+            </Link>
           </div>
         </div>
       </div>

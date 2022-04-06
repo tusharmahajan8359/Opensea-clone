@@ -2,6 +2,7 @@ import React from "react";
 import "./CreateNewItem.css";
 import { FaAsterisk, FaPlus, FaStar } from "react-icons/fa";
 import { useState, useEffect, useRef } from "react";
+import {useHistory} from "react-router-dom"
 import { ethers } from "ethers";
 import Collection from "../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import { create as ipfsHttpClient } from "ipfs-http-client";
@@ -13,6 +14,7 @@ const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const SAMPLE_TOKEN_URI = "http://test.com";
 
 export const CreateNewItems = () => {
+  const histroy = useHistory();
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [currentAccount, setAccount] = useState();
@@ -25,6 +27,7 @@ export const CreateNewItems = () => {
 
   let _name = useRef();
   let _link = useRef();
+  let ItemId;
 
   useEffect(() => {
     const fetchCollections = async () => {
@@ -138,7 +141,33 @@ export const CreateNewItems = () => {
           (event) => event.event === "NFTCreated"
         );
         console.log("Item ID: ", parseInt(event.args[0]._hex, 16));
+        ItemId=parseInt(event.args[0]._hex, 16);
+        
       });
+
+      
+      const item = await contract.NFTs(ItemId);
+
+      const ipfsLink = await contract.tokenURI(item[0]);
+
+      const obj = {
+        id: item[0],
+        name: item[1],
+        creator: item[2],
+      };
+      fetch(ipfsLink)
+        .then((res) => res.json())
+        .then((data) => {
+          obj.description = data.description;
+          obj.image = data.image;
+          histroy.push("/Explore/Nft", { state: obj});
+       })
+       
+
+
+
+
+     
   };
 
   // const getCollections = async () => {

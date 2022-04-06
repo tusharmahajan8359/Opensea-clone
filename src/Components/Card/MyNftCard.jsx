@@ -1,24 +1,33 @@
 import React from 'react'
 import "./ExploreCard.css";
-const MyNftCard = () => {
+import {useHistory} from "react-router-dom"
+
+const MyNftCard = ({nftdata}) => {
+  const history=useHistory();
+  console.log(nftdata)
+  
+const handleViewNft=()=>{
+     
+      history.push("/Explore/Nft", { state: nftdata});
+}
   return (
     <>
-    <div className=" col"  >
+    <div className=" col" onClick={handleViewNft} >
       <div className="card h-100">
         <img
-          src={"https://picsum.photos/200/300"}
+          src={nftdata.image}
           className="card-img-top"
           alt="..."
           style={{ height: "18rem" }}
         />
         <div className="body text-center">
          
-          <h4 className="card-title mt-5 mb-3">NFT</h4>
+          <h4 className="card-title mt-5 mb-3">{nftdata.name}</h4>
           
           <p className="card-text text-truncate px-5 my-3 description">
-           this is nft
+           {nftdata.description}
           </p>
-          <p> 7-item</p>
+         
         </div>
 
       </div>

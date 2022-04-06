@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ethers, Signer } from "ethers";
 import MyNftCard from "../../Card/MyNftCard";
@@ -11,6 +11,7 @@ const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const CollectionDetails = () => {
   let location = useLocation();
   let { state } = location.state;
+  const [nftList,setNftList]=useState([]);
   let provider;
   console.log("data", state);
 
@@ -21,7 +22,7 @@ const CollectionDetails = () => {
   useEffect(async () => {
     await onPageLoad();
     getNFTs();
-  });
+  },[]);
 
   const getNFTs = async () => {
     const contract = new ethers.Contract(
@@ -32,6 +33,7 @@ const CollectionDetails = () => {
 
     try {
       const items = await contract.getItems(state.id);
+      setNftList([]);
       for (let i = 0; i < items.length; i++) {
         const item = await contract.NFTs(items[i]);
 
@@ -47,7 +49,9 @@ const CollectionDetails = () => {
           .then((data) => {
             obj.description = data.description;
             obj.image = data.image;
-            console.log(obj);
+            setNftList((old)=>{
+              return [...old,obj];
+            })
           });
       }
     } catch (err) {
@@ -71,9 +75,10 @@ const CollectionDetails = () => {
       <h3 className="text-center">NFT's</h3>
 
       <div className="row row-cols-md-3 gy-3 p-0 m-5">
-        <MyNftCard />
-        <MyNftCard />
-        <MyNftCard />
+        {nftList.map((data,index)=>{
+          return  <MyNftCard key={index} nftdata={data}/>
+        })}
+       
       </div>
     </div>
   );

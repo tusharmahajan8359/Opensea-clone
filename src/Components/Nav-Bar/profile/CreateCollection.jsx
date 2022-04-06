@@ -1,9 +1,8 @@
 import React from "react";
 import { FaAsterisk } from "react-icons/fa";
 import "./CreateCollection.css";
-import { Link } from "react-router-dom";
 import { useState, useRef } from "react";
-import {useHistory} from "react-router-dom"
+import {useHistory,Link} from "react-router-dom"
 import { ethers } from "ethers";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
@@ -146,19 +145,19 @@ export const CreateCollection = () => {
             Description
           </label>
           <p className="sub-title text-muted">
-            <a className="link text-decoration-none" href="/">
+            <Link className="link text-decoration-none" to="/">
               Markdown
-            </a>{" "}
+            </Link>{" "}
             syntax is supported. 0 of 1000 characters used.
           </p>
-          <textarea
+          <textareLink
             className="form-control"
             id="description"
             rows="4"
             onChange={(e) => {
               setDescription(e.target.value);
             }}
-          ></textarea>
+          ></textareLink>
         </div>
 
         <button

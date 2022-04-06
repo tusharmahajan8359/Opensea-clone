@@ -1,7 +1,7 @@
 const heroData = {
   title: "Discover, collect, and sell extraordinary Features",
   text: "Oasis is one of the Best Marketplace around the globe",
-  mainImg: "https://source.unsplash.com/collection/190727/500x500",
+  mainImg: "https://lh3.googleusercontent.com/bXQ7PUJ2k_dzuIQMFrfiKJ0wKjGDeWm2EPDuNXqLiW6z9ZY5HnDagZl3Lhufv8rop_G9B9O7Pb7nqrj0gdyPXTH-=s550",
 
   userInfo: [
     {

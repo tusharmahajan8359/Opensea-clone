@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom"
 import "./helpDesk.css";
 import { BiSearch } from "react-icons/bi";
 import { CardHelp } from "./CardHelp";
@@ -8,7 +9,7 @@ export const HelpDesk = () => {
     <div>
       {/* <nav className="navbar navbar-expand-md navbar-light bg-light stick-top mx-5">
         <div className="container-fluid">
-          <a className="navbar-brand fs-3 fw-bold" href="#">
+          <Link className="navbar-brand fs-3 fw-bold" to="#">
             <img
               src="/docs/5.0/assets/brand/bootstrap-logo.svg"
               alt=""
@@ -17,11 +18,11 @@ export const HelpDesk = () => {
               className="d-inline-block align-text-top"
             />
             Oasis
-          </a>
+          </Link>
 
           <ul className="navbar-nav me-auto">
             <li className="nav-item">
-              <a className="nav-link active fs-3" aria-current="page" href="#"
+              <a className="nav-link active fs-3" aria-current="page" to="#"
               >Help Center</a
               >
             </li>
@@ -73,9 +74,9 @@ export const HelpDesk = () => {
             {questions.map((que) => {
               return (
                 <div className="col">
-                  <a href="http://" className="text-decoration-none text-dark">
+                  <Link to="http://" className="text-decoration-none text-dark">
                     <h5 className="title-inner"> {que} </h5>
-                  </a>
+                  </Link>
                 </div>
               );
             })}

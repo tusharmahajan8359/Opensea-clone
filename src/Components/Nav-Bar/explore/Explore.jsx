@@ -10,6 +10,7 @@ const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
 export const Explore = () => {
   let provider;
+  const [allcollections,setAllCollections]=useState([]);
   const onPageLoad = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
   };
@@ -17,7 +18,7 @@ export const Explore = () => {
   useEffect(async () => {
     await onPageLoad();
     fetchAllCollections();
-  });
+  },[]);
 
   const fetchAllCollections = async () => {
     const contract = new ethers.Contract(
@@ -28,10 +29,11 @@ export const Explore = () => {
 
     try {
       const collections = await contract.getAllCollections();
-      console.log(collections);
+     
+      setAllCollections([]);
       for(let i = 0; i < collections.length; i++){
         const collection = await contract.collections(collections[i]);
-        console.log(collection[3])
+        // console.log(collection[3])
         const ipfsLink = collection[3]
         const obj = {
           id: collection[0],
@@ -44,7 +46,9 @@ export const Explore = () => {
 
             obj.description = data.description;
             obj.image = data.image;
-            console.log(obj)
+            setAllCollections((old)=>{
+              return [...old, obj];
+            })
           });
       }
     } catch (err) {
@@ -56,14 +60,11 @@ export const Explore = () => {
     <main className="section-explore">
       <h2 className="title heading-secondary my-5">Explore Collections</h2>
       <div className="container-card">
-        {carddata.map((data, index) => {
+        {allcollections.map((data, index) => {
           return (
             <ExploreCard
               key={index}
-              title={data.title}
-              desc={data.desc}
-              imgsrc={data.imgsrc}
-              uname={data.uname}
+              collectiondata={data}
             />
           );
         })}

@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from "react-router-dom"
 import {
   FaTwitter,
   FaInstagram,
@@ -58,9 +59,9 @@ export default function Footer() {
       <div className="row">
         <div className="col-lg-4 col-md-12 company">
           <img src={footerdata.logo} alt="brand-logo" className="brand-logo" />
-          <a href="/" className="title cursor-pointer">
+          <Link to="/" className="title cursor-pointer">
             <h3 className="fs-1">Oasis</h3>
-          </a>
+          </Link>
           <p className="about-brand fs-3 lh-base">{footerdata.aboutBrand}</p>
         </div>
         <div className="col-lg-2 col">
@@ -108,9 +109,9 @@ export default function Footer() {
         </div>
       </div>
 
-      <a href="/" className="copy-right fs-5">
+      <Link to="/" className="copy-right fs-5">
         {footerdata.copyRight}
-      </a>
+      </Link>
     </>
   );
 }

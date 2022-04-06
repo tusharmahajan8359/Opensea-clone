@@ -1,18 +1,11 @@
 import React, { useState } from "react";
+import {Link} from "react-router-dom"
 import { BiSearch } from "react-icons/bi";
 import "./NavBar.css";
 import Brand from "./Brand";
-import { Switch, Router, Route, Link } from "react-router-dom";
 import NavItem from "./NavItem";
 import { navBarData } from "./NavBarData";
-import { HelpDesk } from "./resources/HelpDesk";
-import { Explore } from "./explore/Explore";
-import { MyCollection } from "./profile/MyCollection";
-import { CreateNewItems } from "../CreateNewItems";
-import { CreateCollection } from "./profile/CreateCollection";
-import CollectionDetails  from "./profile/CollectionDetails";
 import { Wallet } from "../wallet/Wallet";
-import ViewNft from "../NFT/ViewNft";
 
 export default function Navbar(props) {
   const [click, setClick] = useState(false);
@@ -63,7 +56,7 @@ export default function Navbar(props) {
               <NavItem key={item.id} item={item} />
             ))}
             <li className="nav-item dropdown">
-              <a
+              <a 
                 className="nav-link item-title"
                 id="dropdownMenuLink"
                 aria-expanded="false"
@@ -81,31 +74,7 @@ export default function Navbar(props) {
         <Wallet stateData={props.stateData} setStateData={props.setStateData} />
       )}
 
-      <Switch>
-        <Route path="/Explore" exact>
-          <Explore />
-        </Route>
-        <Route path="/Help center">
-          <HelpDesk />
-        </Route>
-        <Route path="/create">
-          <CreateNewItems />
-        </Route>
-        <Route path="/my Collections" exact>
-          <MyCollection />
-        </Route>
-
-        <Route path="/my collections/create" exact>
-          <CreateCollection />
-        </Route>
-        <Route path="/Explore/Nft" exact>
-          <ViewNft />
-        </Route>
-        <Route path="/CollectionDetails" exact>
-           <CollectionDetails />
-        </Route>
-        
-      </Switch>
+     
     </>
   );
 }

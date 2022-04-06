@@ -1,16 +1,14 @@
 import React, { useState } from "react";
 import "./ExploreCard.css";
 import { useHistory } from "react-router-dom";
-import { setCollectionData } from "../../actions/index";
-import { useDispatch } from "react-redux";
 
 const MyCollectionCard = ({ collection }) => {
   const history = useHistory();
-  const dispatch = useDispatch();
 
   const handleClick = () => {
+
     console.log("my clicked collection", collection);
-    dispatch(setCollectionData(collection));
+
     history.push("/CollectionDetails", { state: collection });
   };
 

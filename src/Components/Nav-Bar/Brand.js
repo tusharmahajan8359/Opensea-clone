@@ -1,9 +1,9 @@
 import React from 'react'
-
+import {Link} from "react-router-dom"
 export default function Brand({ brandName, brandLogoUrl }) {
   //   console.log(props)
   return (
-    <a className='navbar-brand fs-1 fw-bold' href='/'>
+    <Link className='navbar-brand fs-1 fw-bold' to='/'>
       <img
         src={brandLogoUrl}
         alt={brandName}
@@ -12,6 +12,6 @@ export default function Brand({ brandName, brandLogoUrl }) {
         className='d-inline-block align-text-top'
       />
       {brandName}
-    </a>
+    </Link>
   )
 }

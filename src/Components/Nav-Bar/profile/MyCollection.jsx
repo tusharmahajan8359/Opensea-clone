@@ -67,7 +67,7 @@ export const MyCollection = () => {
               return [...old, obj];
             })
           });
-
+         
       }
 
     } catch (err) { }

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom"
 import "./ViewNFT.css";
 import {
   BsFillTagsFill,
@@ -19,6 +20,10 @@ const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 const ViewNft = () => {
+
+  let location = useLocation();
+  let { state } = location.state;
+  console.log(state)
   const [owner, setOwner] = useState("");
   const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
@@ -173,7 +178,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => {};
+  const getItemStatus = async () => { };
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -193,22 +198,22 @@ const ViewNft = () => {
             <div>
               {itemStatus ? (
                 <div>
-                  <a
+                  <Link
                     className="btn btn-outline-primary btn-lg mx-3"
-                    href="#"
+                    to="#"
                     role="button"
                     onClick={cancelListing}
                   >
                     Cancel Listing
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     className="btn btn-primary btn-lg mx-3"
-                    href="#"
+                    to="#"
                     role="button"
                     onClick={() => setLowerPriceModal(true)}
                   >
                     Lower Price
-                  </a>
+                  </Link>
                   {lowerpriceModal && (
                     <LowerPriceModal
                       show={lowerpriceModal}
@@ -219,15 +224,15 @@ const ViewNft = () => {
                 </div>
               ) : (
                 <div>
-                  <a
+                  <Link
                     className="btn btn-primary btn-lg mx-3"
-                    href="#"
+                    to="#"
                     role="button"
                     // onClick={listForSale}
                     onClick={() => setSellModal(true)}
                   >
                     List for Sale
-                  </a>
+                  </Link>
                   {sellModal && (
                     <SellModal
                       show={sellModal}
@@ -395,113 +400,139 @@ const ViewNft = () => {
                     )}
                     {isDisabled ? (
                       <div>
-                        <a
-                          href="#"
+                        <Link
+                          to="#"
                           className="btn btn-lg btn-primary m-3"
                           onClick={buyNFT}
                         >
                           <FaWallet className="mx-3" size={24} />
                           Buy Now
-                        </a>
-                        <a
-                          href="#"
+                        </Link>
+                        <Link
+                          to="#"
                           className="btn btn-lg btn-outline-primary m-3"
                         >
                           <BsFillTagsFill className="mx-3" size={24} />
                           Make Offer
-                        </a>
+                        </Link>
                       </div>
                     ) : (
                       <div>
-                        <a
-                          href="#"
+                        <Link
+                          to="#"
                           className="btn btn-lg disabled btn-primary m-3"
                         >
                           <FaWallet className="mx-3" size={24} />
                           Buy Now
-                        </a>
+                        </Link>
                       </div>
                     )}
-                    {/* <a href="#" className="btn btn-lg btn-primary m-3">
+                    {/* <Link to="#" className="btn btn-lg btn-primary m-3">
                     <FaWallet className="mx-3" size={24} />
                     Buy Now
-                  </a>
-                  <a href="#" className="btn btn-lg btn-outline-primary m-3">
+                  </Link>
+                  <Link to="#" className="btn btn-lg btn-outline-primary m-3">
                     <BsFillTagsFill className="mx-3" size={24} />
                     Make Offer
-                  </a> */}
+                  </Link> */}
                   </div>
                 </div>
               ) : (
                 <div></div>
               )}
 
-              <div className="accordion" id="accordionExample">
-                <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingTwo">
-                    <button
-                      className="accordion-button fs-2 collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseTwo"
-                      aria-expanded="false"
-                      aria-controls="collapseTwo"
-                    >
-                      Listing
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseTwo"
-                    className="accordion-collapse collapse"
-                    aria-labelledby="headingTwo"
-                    data-bs-parent="#accordionExample"
-                  >
-                    <div className="accordion-body fs-3">
-                      <strong>This is the second item's accordion body.</strong>{" "}
-                      It is hidden by default, until the collapse plugin adds
-                      the appropriate classes that we use to style each element.
-                      These classes control the overall appearance, as well as
-                      the showing and hiding via CSS transitions. You can modify
-                      any of this with custom CSS or overriding our default
-                      variables. It's also worth noting that just about any HTML
-                      can go within the <code>.accordion-body fs-3</code>,
-                      though the transition does limit overflow.
-                    </div>
-                  </div>
-                </div>
-                <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingThree">
-                    <button
-                      className="accordion-button fs-2 collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseThree"
-                      aria-expanded="false"
-                      aria-controls="collapseThree"
-                    >
-                      Offers
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseThree"
-                    className="accordion-collapse collapse"
-                    aria-labelledby="headingThree"
-                    data-bs-parent="#accordionExample"
-                  >
-                    <div className="accordion-body fs-3">
-                      <strong>This is the third item's accordion body.</strong>{" "}
-                      It is hidden by default, until the collapse plugin adds
-                      the appropriate classes that we use to style each element.
-                      These classes control the overall appearance, as well as
-                      the showing and hiding via CSS transitions. You can modify
-                      any of this with custom CSS or overriding our default
-                      variables. It's also worth noting that just about any HTML
-                      can go within the <code>.accordion-body fs-3</code>,
-                      though the transition does limit overflow.
-                    </div>
-                  </div>
-                </div>
-              </div>
+<div className="accordion" id="accordionExample">
+      <div className="accordion-item">
+        <h2 className="accordion-header" id="headingTwo">
+          <button
+            className="accordion-button fs-2 collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseTwo"
+            aria-expanded="false"
+            aria-controls="collapseTwo"
+          >
+            Listing
+          </button>
+        </h2>
+        <div
+          id="collapseTwo"
+          className="accordion-collapse collapse"
+          aria-labelledby="headingTwo"
+          data-bs-parent="#accordionExample"
+        >
+          <div className="accordion-body fs-3">
+            <div className="table-responsive-md">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td><button type="button" className="btn btn-primary">Cancel</button></td>
+                  </tr>
+                  
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="accordion-item">
+        <h2 className="accordion-header" id="headingThree">
+          <button
+            className="accordion-button fs-2 collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseThree"
+            aria-expanded="false"
+            aria-controls="collapseThree"
+          >
+            Offers
+          </button>
+        </h2>
+        <div
+          id="collapseThree"
+          className="accordion-collapse collapse"
+          aria-labelledby="headingThree"
+          data-bs-parent="#accordionExample"
+        >
+          <div className="accordion-body fs-3">
+            <div className="table-responsive-md">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">First</th>
+                    <th scope="col">Last</th>
+                    <th scope="col">Handle</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">1</th>
+                    <td>Mark</td>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td><button type="button" className="btn btn-primary">Buy</button></td>
+                  </tr>
+                 
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
             </div>
           </div>
         </div>
@@ -509,5 +540,6 @@ const ViewNft = () => {
     </main>
   );
 };
+
 
 export default ViewNft;
