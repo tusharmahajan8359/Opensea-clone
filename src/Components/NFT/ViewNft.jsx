@@ -26,7 +26,9 @@ const ViewNft = () => {
   const [nftData, setNftData] = useState({
     collectionName: "",
     nftName: "",
+    creator: "",
     currentPrice: "",
+    onSale: false,
   });
 
   const [sellModal, setSellModal] = useState(false);
@@ -49,21 +51,30 @@ const ViewNft = () => {
       tokenOwner = await contract.ownerOf(TOKENID);
       return account;
     };
-
+    const _tokenURI = await contract.tokenURI(TOKENID);
     const _account = await func();
     const _status = await marketContract.idToOnSale(TOKENID);
     const _currentPrice = await marketContract.idToPrice(TOKENID);
     const price = ethers.utils.formatEther(_currentPrice).toString();
-    const _collectionName = await contract.collections(COLLECTIONID).name;
-    console.log(_collectionName);
-    const _nftName = await contract.NFTs(TOKENID).nft_name;
-
+    const _collectionName = await contract.collections(COLLECTIONID);
+    const _nftData = await contract.NFTs(TOKENID);
+    const itemSaleStatus = await marketContract.idToOnSale(TOKENID);
+    console.log(await contract.ownerOf(TOKENID));
+    fetch(_tokenURI)
+      .then((res) => res.json())
+      .then((data) => {
+        setNftData({ ...nftData, description: data.description });
+      });
     setCurrentAccount(_account[0]);
     setItemStatus(_status);
     setNftData({
-      collectionName: _collectionName,
-      nftName: _nftName,
+      ...nftData,
+      collectionName: _collectionName[1],
+      nftName: _nftData[1],
+      creator: _nftData[2],
+      image: _nftData[3],
       currentPrice: price,
+      onSale: itemSaleStatus,
     });
 
     if (currentAccount === tokenOwner) {
@@ -80,12 +91,19 @@ const ViewNft = () => {
     account = await provider.listAccounts();
     setCurrentAccount(account[0]);
   });
-/**
- *
- *
- * @param {*} _recepient
- */
-const sendNFT = async (_recepient) => {
+
+  const testFunc = async () => {
+    const collection = await contract.collections(COLLECTIONID);
+    console.log(collection[1]);
+    const nft = await contract.NFTs(TOKENID);
+    console.log(nft[1]);
+  };
+  /**
+   *
+   *
+   * @param {*} _recepient
+   */
+  const sendNFT = async (_recepient) => {
     setSendNftModal(false);
     tokenOwner = await contract.ownerOf(TOKENID);
 
@@ -101,6 +119,15 @@ const sendNFT = async (_recepient) => {
   const listForSale = async (selldata) => {
     setSellModal(false);
 
+    const isApproved = await contract.isApprovedForAll(
+      currentAccount,
+      marketAddress
+    );
+    console.log(isApproved);
+    if (!isApproved) {
+      const transaction = await contract.setApprovalForAll(marketAddress, true);
+      await transaction.wait();
+    }
     const tx = await marketContract.createMarketItem(
       TOKENID,
       ethers.utils.parseEther(selldata),
@@ -108,7 +135,7 @@ const sendNFT = async (_recepient) => {
       { value: ethers.utils.parseEther("0.25") }
     );
     await tx.wait();
-    setNftData({ ...nftData, currentPrice: selldata.toString() });
+    setNftData({ ...nftData, currentPrice: selldata.toString(), onSale: true });
     setItemStatus(true);
     console.log("Status: ", itemStatus);
   };
@@ -119,12 +146,13 @@ const sendNFT = async (_recepient) => {
       "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
     );
     await tx.wait();
+    setNftData({ ...nftData, onSale: false });
     setItemStatus(false);
     console.log("Status: ", itemStatus);
   };
 
   const lowerPrice = async (_newPrice) => {
-    setLowerPriceModal(false)
+    setLowerPriceModal(false);
     console.log("Price Before: ", await marketContract.idToPrice(TOKENID));
     const transaction = await marketContract.lowerPrice(
       TOKENID,
@@ -134,6 +162,15 @@ const sendNFT = async (_recepient) => {
     await transaction.wait();
     console.log("Price after: ", await marketContract.idToPrice(TOKENID));
     setNftData({ ...nftData, currentPrice: _newPrice.toString() });
+  };
+
+  const buyNFT = async () => {
+    const tx = await marketContract.buyNFT(TOKENID, collectionAddress, {
+      value: ethers.utils.parseEther(nftData.currentPrice),
+    });
+    await tx.wait();
+    setItemStatus(false);
+    setNftData({ ...nftData, onSale: false });
   };
 
   const getItemStatus = async () => {};
@@ -212,11 +249,7 @@ const sendNFT = async (_recepient) => {
                 <FaEthereum size={28} />
               </div>
               <div className="nft-container">
-                <img
-                  src="https://source.unsplash.com/collection/190727/500x500"
-                  alt=""
-                  style={{ width: " 100%" }}
-                />
+                <img src={nftData.image} alt="" style={{ width: " 100%" }} />
               </div>
             </div>
             <div className="accordion" id="">
@@ -244,13 +277,11 @@ const sendNFT = async (_recepient) => {
                   <div className="accordion-body  fs-3">
                     <p className="text-muted">
                       Created by{" "}
-                      <span className="text-primary">owner-name</span>
+                      <span className="text-primary fs-5">
+                        {nftData.creator}
+                      </span>
                     </p>
-                    <p className="description">
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                      Possimus, rem molestias unde maxime ipsa expedita quas
-                      quos deleniti placeat dicta qui in hic nostrum ducimum.
-                    </p>
+                    <p className="description">{nftData.description}</p>
                   </div>
                 </div>
               </div>
@@ -276,13 +307,13 @@ const sendNFT = async (_recepient) => {
                     <div className="detail-item contract-address">
                       <p className="title">Contract Address</p>
                       <p className="text ms-5 text-truncate address">
-                        jhtdfdkudlukufdkyutffflyuffdufofluf
+                        {collectionAddress}
                       </p>
                     </div>
                     <div className="detail-item contract-address">
                       <p className="title">Token Id</p>
                       <p className="text ms-5 text-truncate address">
-                        ukufdkyutffflyuffdufofluf
+                        #{TOKENID}
                       </p>
                     </div>
                   </div>
@@ -294,7 +325,7 @@ const sendNFT = async (_recepient) => {
             <div className="nft-text-container">
               <div className="about-collection">
                 <span className="collection-name text-primary fs-3">
-                  my-own-collections
+                  {nftData.collectionName}
                 </span>
                 <div className="collection-feature">
                   <div
@@ -328,7 +359,11 @@ const sendNFT = async (_recepient) => {
                     <button type="button" className="btn btn-outline-secondary">
                       <BsShareFill size={18} />
                     </button>
-                    <button type="button" className="btn btn-outline-secondary">
+                    <button
+                      type="button"
+                      className="btn btn-outline-secondary"
+                      onClick={testFunc}
+                    >
                       <BsThreeDotsVertical size={18} />
                     </button>
                   </div>
@@ -336,53 +371,58 @@ const sendNFT = async (_recepient) => {
               </div>
 
               <div className="about-nft">
-                <p className="nft-name fs-2 mb-3">my-profile-pic</p>
+                <p className="nft-name fs-2 mb-3">{nftData.nftName}</p>
                 <p className="owner text-muted fs-4">
                   owned by{" "}
                   <span className="text-primary cursor-pointer">{owner}</span>
                 </p>
               </div>
-              <div className="card pricing-card">
-                <div className="card-header fs-3">Current Price</div>
-                <div className="card-body">
-                  {itemStatus ? (
-                    <div>
-                      <p className="text">
-                        <FaEthereum size={28} />
-                        <span className="price fs-3">
-                          {nftData.currentPrice.toString()}
-                        </span>
-                      </p>
-                    </div>
-                  ) : (
-                    <div />
-                  )}
-                  {isDisabled ? (
-                    <div>
-                      <a href="#" className="btn btn-lg btn-primary m-3">
-                        <FaWallet className="mx-3" size={24} />
-                        Buy Now
-                      </a>
-                      <a
-                        href="#"
-                        className="btn btn-lg btn-outline-primary m-3"
-                      >
-                        <BsFillTagsFill className="mx-3" size={24} />
-                        Make Offer
-                      </a>
-                    </div>
-                  ) : (
-                    <div>
-                      <a
-                        href="#"
-                        className="btn btn-lg disabled btn-primary m-3"
-                      >
-                        <FaWallet className="mx-3" size={24} />
-                        Buy Now
-                      </a>
-                    </div>
-                  )}
-                  {/* <a href="#" className="btn btn-lg btn-primary m-3">
+              {nftData.onSale ? (
+                <div className="card pricing-card">
+                  <div className="card-header fs-3">Current Price</div>
+                  <div className="card-body">
+                    {itemStatus ? (
+                      <div>
+                        <p className="text">
+                          <FaEthereum size={28} />
+                          <span className="price fs-3">
+                            {nftData.currentPrice.toString()}
+                          </span>
+                        </p>
+                      </div>
+                    ) : (
+                      <div />
+                    )}
+                    {isDisabled ? (
+                      <div>
+                        <a
+                          href="#"
+                          className="btn btn-lg btn-primary m-3"
+                          onClick={buyNFT}
+                        >
+                          <FaWallet className="mx-3" size={24} />
+                          Buy Now
+                        </a>
+                        <a
+                          href="#"
+                          className="btn btn-lg btn-outline-primary m-3"
+                        >
+                          <BsFillTagsFill className="mx-3" size={24} />
+                          Make Offer
+                        </a>
+                      </div>
+                    ) : (
+                      <div>
+                        <a
+                          href="#"
+                          className="btn btn-lg disabled btn-primary m-3"
+                        >
+                          <FaWallet className="mx-3" size={24} />
+                          Buy Now
+                        </a>
+                      </div>
+                    )}
+                    {/* <a href="#" className="btn btn-lg btn-primary m-3">
                     <FaWallet className="mx-3" size={24} />
                     Buy Now
                   </a>
@@ -390,8 +430,11 @@ const sendNFT = async (_recepient) => {
                     <BsFillTagsFill className="mx-3" size={24} />
                     Make Offer
                   </a> */}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div></div>
+              )}
 
               <div className="accordion" id="accordionExample">
                 <div className="accordion-item">

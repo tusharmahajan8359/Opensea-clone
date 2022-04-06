@@ -165,7 +165,7 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
     function getAllCollections() external view returns (uint256[] memory) {
         uint256[] memory collectionIds = new uint256[](collectionCounter);
         for (uint256 i = 1; i <= collectionCounter; i++) {
-            collectionIds[i] = i;
+            collectionIds[i-1] = i;
         }
         return collectionIds;
     }

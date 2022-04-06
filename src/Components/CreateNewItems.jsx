@@ -4,6 +4,9 @@ import { FaAsterisk, FaPlus, FaStar } from "react-icons/fa";
 import { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
 import Collection from "../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
+import { create as ipfsHttpClient } from "ipfs-http-client";
+
+const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 
@@ -14,6 +17,11 @@ export const CreateNewItems = () => {
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [currentAccount, setAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
+  const [fileUrl, setFileUrl] = useState(null);
+  const [formInput, updateFormInput] = useState({
+    name: "",
+    description: "",
+  });
 
   let _name = useRef();
   let _link = useRef();
@@ -49,6 +57,40 @@ export const CreateNewItems = () => {
     stateData.then((log) => setCollections(log));
   }, [currentAccount]);
 
+  async function onFileUpload(e) {
+    const file = e.target.files[0];
+    try {
+      const added = await client.add(file, {
+        progress: (prog) => console.log(`received: ${prog}`),
+      });
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      setFileUrl(url);
+      console.log("Image URL: ", url);
+    } catch (error) {
+      console.log("Error uploading file: ", error);
+    }
+    console.log("Image Upload Complete");
+  }
+
+  async function uploadToIPFS() {
+    console.log("uploading to IPFS...");
+    if (!formInput.name || !fileUrl) return;
+    /* first, upload to IPFS */
+    const data = JSON.stringify({
+      description: formInput.description,
+      image: fileUrl,
+    });
+    try {
+      const added = await client.add(data);
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+
+      console.log("Collection Link: ", url);
+      return url;
+    } catch (error) {
+      console.log("Error uploading file: ", error);
+    }
+  }
+
   window.ethereum.on("accountsChanged", async function () {
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -68,7 +110,7 @@ export const CreateNewItems = () => {
   const handleButton = () => {
     setIsDisabled(
       Boolean(
-        !(selectedCollection && _name.current.value && _link.current.value)
+        !(selectedCollection && fileUrl && formInput.name)
       )
     );
   };
@@ -82,12 +124,13 @@ export const CreateNewItems = () => {
       signer
     );
 
+    const url = await uploadToIPFS()
     await contract
       .createNFT(
-        _name.current.value,
+        formInput.name,
         selectedCollection,
-        _link.current.value,
-        SAMPLE_TOKEN_URI
+        fileUrl,
+        url
       )
       .then(async (transaction) => {
         const tx = await transaction.wait();
@@ -124,19 +167,22 @@ export const CreateNewItems = () => {
       </p>
       <div className="mb-3">
         <label htmlFor="formFile" className="form-label">
-          Image, Video, Audio, or 3D Model
+          Image
           <FaAsterisk className="text-danger m-2" size={8} />
         </label>
         <p className="sub-title text-muted">
-          File types supported: JPG, PNG, GIF, SVG, MP4, WEBM, MP3, WAV, OGG,
-          GLB, GLTF. Max size: 100 MB
+          Max size: 100 MB
         </p>
         <input
-          className="form-control choose-file"
           type="file"
-          id="formFile"
+          name="Asset"
+          className="my-4"
           required
+          onChange={onFileUpload}
         />
+        <br />
+        {fileUrl && <img className="rounded mt-4" width="350" src={fileUrl} />}
+        <br />
       </div>
       <div className="mb-3">
         <label htmlFor="formFile" className="form-label">
@@ -147,7 +193,7 @@ export const CreateNewItems = () => {
           className="form-control form-control-lg"
           type="text"
           required
-          ref={_name}
+          onChange={(e) => updateFormInput({ ...formInput, name: e.target.value })}
           placeholder="item name"
         />
       </div>
@@ -157,15 +203,13 @@ export const CreateNewItems = () => {
           External link
         </label>
         <p className="sub-title text-muted">
-          Oasis will include a link to this URL on this item's detail page, so
-          that users can click to learn more about it. You are welcome to link
-          to your own webpage with more details.
+          This would be the ipfs link to the image.
         </p>
         <input
           className="form-control form-control-lg"
           type="text"
-          ref={_link}
-          placeholder="https://yoursite.io/item/123"
+          disabled={true}
+          placeholder= {fileUrl}
           aria-label=".form-control-lg example"
         />
       </div>
@@ -182,6 +226,7 @@ export const CreateNewItems = () => {
           className="form-control"
           id="description"
           placeholder="Provide a detailed description of your item."
+          onChange={(e) => updateFormInput({ ...formInput, description: e.target.value })}
           rows="4"
           columns="5"
         ></textarea>

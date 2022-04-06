@@ -46,12 +46,14 @@ export const MyCollection = () => {
       for (let i = 0; i < collections.length; i++) {
 
         const collection = await contract.collections(collections[i]);
-
+        const items = await contract.getItems(collection[0]);
+        const itemCount = items.length;
         const ipfsLink = collection[3]
 
         const obj = {
           id: collection[0],
           name: collection[1],
+          itemCount: itemCount,
           creator: collection[2],
         };
 
