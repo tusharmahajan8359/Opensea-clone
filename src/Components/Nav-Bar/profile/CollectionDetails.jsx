@@ -19,6 +19,7 @@ const CollectionDetails = () => {
   };
 
   useEffect(async () => {
+    window.scrollTo(0,0)
     await onPageLoad();
     getNFTs();
   }, []);

@@ -1,17 +1,17 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 export default function NavItem(props) {
   // console.log(props)
   return (
     <ul className='nav-item dropdown'>
-      <Link
+      <NavLink
         className='nav-link item-title'
         to={'/' + props.item.itemTitle}
         id='dropdownMenuLink'
         aria-expanded='false'
       >
         {props.item.itemTitle}
-      </Link>
+      </NavLink>
       <div
         className={` ${
           props.item.dropdownItems.length > 0 ? 'dropdown-menu' : 'd-none'

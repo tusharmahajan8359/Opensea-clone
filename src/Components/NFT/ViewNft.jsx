@@ -26,6 +26,8 @@ const ViewNft = () => {
   const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
   const [itemStatus, setItemStatus] = useState(false);
+  // const [TOKENID, setTOKENID] = useState();
+  // const [COLLECTIONID, setCOLLECTIONID] = useState();
   const [nftData, setNftData] = useState({
     collectionName: "",
     nftName: "",
@@ -37,23 +39,25 @@ const ViewNft = () => {
   const [sellModal, setSellModal] = useState(false);
   const [lowerpriceModal, setLowerPriceModal] = useState(false);
   const [sendnftmodal, setSendNftModal] = useState(false);
-
-  const COLLECTIONID = parseInt(state.collectionId._hex, 16);
-  const TOKENID = parseInt(state.id._hex, 16);
+  // const [state, setState] = useState()
 
   let tokenOwner;
   let provider;
   let contract;
   let marketContract;
   let account;
+  let COLLECTIONID = parseInt(state.collectionId._hex, 16);
+  let TOKENID = parseInt(state.id._hex, 16);
 
   useEffect(async () => {
+    window.scrollTo(0,0)
     const func = async () => {
       account = await provider.listAccounts();
 
       tokenOwner = await contract.ownerOf(TOKENID);
       return account;
     };
+
     const _tokenURI = await contract.tokenURI(TOKENID);
     const _account = await func();
     const _status = await marketContract.idToOnSale(TOKENID);
@@ -125,7 +129,6 @@ const ViewNft = () => {
       currentAccount,
       marketAddress
     );
-    console.log(isApproved);
     if (!isApproved) {
       const transaction = await contract.setApprovalForAll(marketAddress, true);
       await transaction.wait();
@@ -139,7 +142,6 @@ const ViewNft = () => {
     await tx.wait();
     setNftData({ ...nftData, currentPrice: selldata.toString(), onSale: true });
     setItemStatus(true);
-    console.log("Status: ", itemStatus);
   };
 
   const cancelListing = async () => {
@@ -195,22 +197,22 @@ const ViewNft = () => {
             <div>
               {itemStatus ? (
                 <div>
-                  <Link
+                  <button
                     className="btn btn-outline-primary btn-lg mx-3"
                     to="#"
                     role="button"
                     onClick={cancelListing}
                   >
                     Cancel Listing
-                  </Link>
-                  <Link
+                  </button>
+                  <button
                     className="btn btn-primary btn-lg mx-3"
                     to="#"
                     role="button"
                     onClick={() => setLowerPriceModal(true)}
                   >
                     Lower Price
-                  </Link>
+                  </button>
                   {lowerpriceModal && (
                     <LowerPriceModal
                       show={lowerpriceModal}
@@ -221,15 +223,14 @@ const ViewNft = () => {
                 </div>
               ) : (
                 <div>
-                  <Link
+                  <button
                     className="btn btn-primary btn-lg mx-3"
-                    to="#"
                     role="button"
                     // onClick={listForSale}
                     onClick={() => setSellModal(true)}
                   >
                     List for Sale
-                  </Link>
+                  </button>
                   {sellModal && (
                     <SellModal
                       show={sellModal}
@@ -401,31 +402,30 @@ const ViewNft = () => {
                     )}
                     {isDisabled ? (
                       <div>
-                        <Link
-                          to="#"
+                        <button
                           className="btn btn-lg btn-primary m-3"
                           onClick={buyNFT}
                         >
                           <FaWallet className="mx-3" size={24} />
                           Buy Now
-                        </Link>
-                        <Link
-                          to="#"
+                        </button>
+                        <button
+                          
                           className="btn btn-lg btn-outline-primary m-3"
                         >
                           <BsFillTagsFill className="mx-3" size={24} />
                           Make Offer
-                        </Link>
+                        </button>
                       </div>
                     ) : (
                       <div>
-                        <Link
+                        <button
                           to="#"
                           className="btn btn-lg disabled btn-primary m-3"
                         >
                           <FaWallet className="mx-3" size={24} />
                           Buy Now
-                        </Link>
+                        </button>
                       </div>
                     )}
                     {/* <Link to="#" className="btn btn-lg btn-primary m-3">

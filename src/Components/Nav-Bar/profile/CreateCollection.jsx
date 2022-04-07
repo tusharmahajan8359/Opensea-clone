@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaAsterisk } from "react-icons/fa";
 import "./CreateCollection.css";
 import { useState, useRef } from "react";
@@ -18,6 +18,9 @@ export const CreateCollection = () => {
   const _name = useRef();
   const history = useHistory();
 
+  useEffect(() => {
+    window.scrollTo(0,0)
+  }, [])
   async function onFileUpload(e) {
     const file = e.target.files[0];
     try {

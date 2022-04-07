@@ -22,6 +22,7 @@ export const MyCollection = () => {
   };
 
   useEffect(async () => {
+    window.scrollTo(0,0)
     await onPageLoad();
     fetchMyCollections();
   }, [currentAccount]);

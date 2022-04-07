@@ -18,6 +18,7 @@ export const Explore = () => {
   useEffect(async () => {
     await onPageLoad();
     fetchAllCollections();
+    window.scrollTo(0,0)
   }, []);
 
   const fetchAllCollections = async () => {

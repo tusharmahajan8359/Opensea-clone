@@ -14,7 +14,7 @@ const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const SAMPLE_TOKEN_URI = "http://test.com";
 
 export const CreateNewItems = () => {
-  const histroy = useHistory();
+  const history = useHistory();
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState(null);
   const [currentAccount, setAccount] = useState();
@@ -24,12 +24,14 @@ export const CreateNewItems = () => {
     name: "",
     description: "",
   });
+  const [nftState, setNftState] = useState();
 
   let _name = useRef();
   let _link = useRef();
   let ItemId;
 
   useEffect(() => {
+    window.scrollTo(0,0)
     const fetchCollections = async () => {
       let collectionNames = [];
       const [account] = await window.ethereum.request({
@@ -134,41 +136,28 @@ export const CreateNewItems = () => {
         console.log("Item ID: ", parseInt(event.args[0]._hex, 16));
         ItemId = parseInt(event.args[0]._hex, 16);
       });
-
-    const item = await contract.NFTs(ItemId);
-
-    const ipfsLink = await contract.tokenURI(item[0]);
-
+    const collectionId = await contract.userToCollectionIds(
+      signer.getAddress(),
+      selectedCollection
+    );
+    const collection = await contract.collections(collectionId);
+    const items = await contract.getItems(collection[0]);
+    const itemCount = items.length;
+    const ipfsLink = collection[3];
     const obj = {
-      id: item[0],
-      name: item[1],
-      creator: item[2],
+      id: collection[0],
+      name: collection[1],
+      itemCount: itemCount,
+      creator: collection[2],
     };
     fetch(ipfsLink)
       .then((res) => res.json())
       .then((data) => {
         obj.description = data.description;
         obj.image = data.image;
-        histroy.push("/Explore/Nft", { state: obj });
+        history.push("/CollectionDetails", { state: obj });
       });
   };
-
-  // const getCollections = async () => {
-  //   const [account] = await window.ethereum.request({
-  //     method: "eth_requestAccounts",
-  //   });
-  //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   const contract = new ethers.Contract(
-  //     collectionAddress,
-  //     Collection.abi,
-  //     provider
-  //   );
-  //   const items = (await contract.getItems(1)).map((item) => {
-  //     item = parseInt(item._hex, 16);
-  //     return item;
-  //   });
-  //   console.log(items);
-  // };
 
   return (
     <div className="container">
@@ -273,6 +262,7 @@ export const CreateNewItems = () => {
             placeholder="Select collection"
             onChange={(e) => {
               handleChange(e.target.value || null);
+              console.log(e.target.value);
             }}
           >
             <option value={""} defaultChecked>
