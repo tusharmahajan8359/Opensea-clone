@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import {Link} from "react-router-dom"
-import { BiSearch } from "react-icons/bi";
-import "./NavBar.css";
-import Brand from "./Brand";
-import NavItem from "./NavItem";
-import { navBarData } from "./NavBarData";
-import { Wallet } from "../wallet/Wallet";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { BiSearch } from 'react-icons/bi';
+import Brand from './Brand';
+import NavItems from './NavItems';
+import { navBarData } from './NavBarData';
+import { Wallet } from '../wallet/Wallet';
+import NavBarCSS from './NavBar.module.css';
 
 export default function Navbar(props) {
   const [click, setClick] = useState(false);
@@ -21,60 +21,43 @@ export default function Navbar(props) {
   return (
     <>
       <nav
-        className={`navbar navbar-expand-md isvisible sticky-top navbar-${navBarData.theme} bg-${navBarData.theme} border-bottom px-5`}
+        className={`navbar-expand-md navbar-light bg-light ${NavBarCSS.Navbar}`}
       >
         <Brand
+          navbarBrand='true'
           brandName={navBarData.brandName}
           brandLogoUrl={navBarData.brandLogoUrl}
         />
         <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
+          className='navbar-toggler'
+          type='button'
+          data-bs-toggle='collapse'
           onClick={handleClick}
-          data-bs-target="#navbarItems"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
+          data-bs-target='#navbarItems'
+          aria-controls='navbarNav'
+          aria-expanded='false'
+          aria-label='Toggle navigation'
         >
-          <span className={click ? "fa fa-times" : "fa fa-bars"}></span>
+          <span className={click ? 'fa fa-times' : 'fa fa-bars'}></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="navbarItems">
-          <form className={`container container-search`}>
-            <BiSearch size="24px" />
+        <div className='collapse navbar-collapse' id='navbarItems'>
+          <div className={`container ${NavBarCSS.ContainerSearch}`}>
+            <BiSearch size='24px' />
             <input
-              className="form-control box-shadow-none"
-              type="search"
+              className={`form-control ${NavBarCSS.FormControl}`}
+              type='search'
               placeholder={navBarData.search}
-              aria-label="Search"
+              aria-label='Search'
             />
-          </form>
+          </div>
 
-          <ul className="navbar-nav mx-5">
-            {navBarData.navItems.map((item) => (
-              <NavItem key={item.id} item={item} />
-            ))}
-            <li className="nav-item dropdown">
-              <a 
-                className="nav-link item-title"
-                id="dropdownMenuLink"
-                aria-expanded="false"
-                onClick={handleWallet}
-              >
-                wallet
-              </a>
-            </li>
-          </ul>
+          <NavItems items={navBarData.navItems} handleWallet={handleWallet} />
         </div>
-
-        {/* </div> */}
       </nav>
       {wallet && (
         <Wallet stateData={props.stateData} setStateData={props.setStateData} />
       )}
-
-     
     </>
   );
 }

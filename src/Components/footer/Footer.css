@@ -2,66 +2,85 @@
 .footer {
   background-color: rgb(24, 104, 183);
   color: #fff;
-  /* margin: 9.6rem auto; */
-  padding: 6.4rem 18rem;
+  margin: 9.6rem auto 0;
+  padding-top: 4.8rem;
 }
 .action-form {
   padding: 0.4rem;
+  font-size: 1.6rem;
 }
-.marketplace {
-  margin: 3rem auto;
-  padding: 10px;
-  border-radius: 12px;
+.action-search-container {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  margin-top: 2.8rem;
 }
-.action-form .search-container input {
-  width: auto;
+.action-search-container input {
   display: inline-block;
+  width: auto;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-default);
   outline: none;
   border: 0;
-  padding: 24px 0 24px 10px;
+  padding: 1.6rem;
 }
-.action-form .search-container .search-btn {
-  background-color: rgb(32, 129, 226);
-  padding: 0.7rem 1.7rem;
-  border-radius: 8px;
+.action-search-container .action-search-btn {
+  height: 32px;
+  background-color: #2081e2;
+  padding: 0.2rem 1.7rem;
+  border-radius: var(--border-radius-default);
   color: #fff;
+  font-size: 1.6rem;
   font-weight: 500;
-  margin: 0.6rem 1rem;
 }
-
-.company {
-  /* text-align: center; */
-  padding: 10px 20px;
-}
-.company .title {
-  color: #fff;
-  text-decoration: none;
-}
-.brand-logo {
-  color: #fff;
-  height: 60px;
-  width: 60px;
+.feature-icons {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 1.8rem;
 }
 .feature-icon {
-  display: inline-block;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-medium);
   background-color: #2081e2;
-  margin: 1rem;
   padding: 1rem;
 }
-.feature-icon:hover {
-  filter: brightness(1.25);
-  box-shadow: 0 0 10px 1px #333;
-}
-.col li {
-  list-style-type: none;
+.feature-icon:hover,
+.action-search-btn:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 0 8px 1px #333;
+  color: var(--bg-light);
 }
 
-.footer .copy-right {
+.copy-right {
+  display: inline-block;
   color: #fff;
   height: 32px;
-  text-align: center;
+  margin: 1.8rem auto;
   text-decoration: none;
+  font-size: 1.6rem;
+}
+.copy-right:hover {
+  filter: brightness(0.5);
+}
+
+@media (max-width: 991.98px) {
+  .footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.8rem;
+    padding: 3rem auto;
+    text-align: center;
+  }
+  .action-form,
+  .community {
+    margin-bottom: 3rem;
+  }
+
+  .action-search-container {
+    margin: 1.6rem auto;
+    justify-content: center;
+    flex-direction: column;
+  }
 }

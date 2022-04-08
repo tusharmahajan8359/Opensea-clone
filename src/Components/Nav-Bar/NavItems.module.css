@@ -1,0 +1,35 @@
+.NavbarNav {
+  gap: 12px;
+  margin-left: 5rem;
+}
+
+.NavItem {
+  display: inline-block;
+  text-align: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.NavLink {
+  text-decoration: none;
+  transition: filter 300ms;
+}
+
+.Dropdown:hover > .dropdown-menu {
+  display: block;
+  padding: 12px 0 0;
+}
+
+.DropdownItem {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  font-size: 1.8rem;
+  border-bottom: 1px solid var(--bg-accent-light);
+}
+
+.Dropdown-item:hover {
+  background-color: var(--bg-light);
+  box-shadow: 0px 2px 3px #888, 0px -2px 3px #888;
+  transition: all 200ms;
+}

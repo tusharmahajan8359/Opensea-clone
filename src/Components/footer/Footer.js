@@ -1,5 +1,5 @@
-import React from "react";
-import {Link} from "react-router-dom"
+import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   FaTwitter,
   FaInstagram,
@@ -7,111 +7,106 @@ import {
   FaRedditAlien,
   FaYoutube,
   FaEnvelope,
-} from "react-icons/fa";
-import "./Footer.css";
-import logo from "../../logo.svg";
+} from 'react-icons/fa';
+import logo from '../../logo.svg';
+import Brand from '../Nav-Bar/Brand';
+import './Footer.css';
 
 export default function Footer() {
   const footerdata = {
-    text: "Join our mailing list to stay in the loop with our newest feature releases, NFT drops, and tips and tricks for navigating Oasis.",
-    searchPlaceholder: "Your email address",
-    logo: logo,
+    text: 'Join our mailing list to stay in the loop with our newest feature releases, NFT drops, and tips and tricks for navigating Oasis.',
+    searchPlaceholder: 'Your email address',
+    brandName: 'Oasis',
+    brandLogoUrl: `${logo}`,
     aboutBrand:
       "The world's first and largest digital marketplace for crypto collectibles and non-fungible tokens (NFTs). Buy, sell, and discover exclusive digital items.",
-    twitterUrl: "",
-    youtubeUrl: "",
-    discordUrl: "",
-    instagramUrl: "",
-    emailUrl: "",
-    copyRight: "© 2018 - 2022 Ozone Networks, Inc",
+    copyRight: '© 2018 - 2022 Ozone Networks, Inc',
   };
   return (
-    <>
-      <div className="row py-4">
-        <div className="col-lg-6 col-md-12 action-form">
-          <h3 className="title fs-1">Stay in loop</h3>
-          <p className="text fs-3 lh-base">{footerdata.text}</p>
-          <form action="" className="search-container fs-3">
-            <input type="text" placeholder={footerdata.searchPlaceholder} />
-            <button className="btn search-btn fs-2">Sign up</button>
-          </form>
+    <div className='container-fluid footer'>
+      <div className='container'>
+        <div className='row py-5 mb-5 border-bottom'>
+          <div className='col-lg-6 col-md-12 action-form'>
+            <h3 className='heading-tertiary text-light mb-3'>Stay in loop</h3>
+            <p className='text fs-3 lh-sm'>{footerdata.text}</p>
+            <form action='' className='action-search-container'>
+              <input type='text' placeholder={footerdata.searchPlaceholder} />
+              <button className='btn action-search-btn'>Sign up</button>
+            </form>
+          </div>
+          <div className='col-lg-6 col-md-12 community'>
+            <h3 className='heading-tertiary text-light mb-3'>
+              Join the community
+            </h3>
+            <div className='feature-icons'>
+              <FaTwitter size={42} className='feature-icon cursor-pointer' />
+              <FaInstagram size={42} className='feature-icon cursor-pointer' />
+              <FaDiscord size={42} className='feature-icon cursor-pointer' />
+              <FaRedditAlien
+                size={42}
+                className='feature-icon cursor-pointer'
+              />
+              <FaYoutube size={42} className='feature-icon cursor-pointer' />
+              <FaEnvelope size={42} className='feature-icon cursor-pointer' />
+            </div>
+          </div>
         </div>
-        <div className="col-lg-6 col-md-12 community">
-          <h3 className="title m-4 fs-1">Join the community</h3>
-          <i className="feature-icon cursor-pointer">
-            <FaTwitter size={30} />
-          </i>
-          <i className="feature-icon cursor-pointer">
-            <FaDiscord size={30} />
-          </i>
-          <i className="feature-icon cursor-pointer">
-            <FaRedditAlien size={30} />
-          </i>
-          <i className="feature-icon cursor-pointer">
-            <FaYoutube size={30} />
-          </i>
-          <i className="feature-icon cursor-pointer">
-            <FaEnvelope size={30} />
-          </i>
+        <div className='row gy-5 py-5 border-bottom'>
+          <div className='col-lg-4 col-md-12 company'>
+            <Brand
+              brandName={footerdata.brandName}
+              brandLogoUrl={footerdata.brandLogoUrl}
+            />
+
+            <p className='about-brand fs-3 lh-base'>{footerdata.aboutBrand}</p>
+          </div>
+
+          <div className='col-lg-2 col-md-4 offset-lg-2'>
+            <h5 className='subheading mb-3'>Markerplace</h5>
+            <ul className='list-unstyled'>
+              <li className='cursor-pointer my-2 fs-4'>Art</li>
+              <li className='cursor-pointer my-2 fs-4'>Photography</li>
+              <li className='cursor-pointer my-2 fs-4'>Sports</li>
+              <li className='cursor-pointer my-2 fs-4'>Virtual World</li>
+              <li className='cursor-pointer my-2 fs-4'>Music</li>
+              <li className='cursor-pointer my-2 fs-4'>Utility</li>
+            </ul>
+          </div>
+          <div className='col-lg-2 col-md-4'>
+            <h5 className='subheading mb-3'>My Account</h5>
+            <ul className='list-unstyled'>
+              <li className='cursor-pointer my-2 fs-4'>Profile</li>
+              <li className='cursor-pointer my-2 fs-4'>Favorites</li>
+              <li className='cursor-pointer my-2 fs-4'>Watchlist</li>
+              <li className='cursor-pointer my-2 fs-4'>My Collections</li>
+              <li className='cursor-pointer my-2 fs-4'>Settings</li>
+            </ul>
+          </div>
+          <div className='col-lg-2 col-md-4'>
+            <h5 className='subheading mb-3'>Resources</h5>
+            <ul className='list-unstyled'>
+              <li className='cursor-pointer my-2 fs-4'>Help Center</li>
+              <li className='cursor-pointer my-2 fs-4'>Partners</li>
+              <li className='cursor-pointer my-2 fs-4'>Gas-Free Marketplace</li>
+              <li className='cursor-pointer my-2 fs-4'>Blog</li>
+              <li className='cursor-pointer my-2 fs-4'>Newsletter</li>
+            </ul>
+          </div>
+          {/* <div className='col-lg-2 col-md-3 col'>
+            <h5 className='subheading mb-3'>Company</h5>
+            <ul className='list-unstyled'>
+              <li className='cursor-pointer my-2 fs-4'>About</li>
+              <li className='cursor-pointer my-2 fs-4'>Careers</li>
+              <li className='cursor-pointer my-2 fs-4'>Ventures</li>
+              <li className='cursor-pointer my-2 fs-4'>Grants</li>
+            </ul>
+          </div> */}
         </div>
+
+        <Link href='/' className='copy-right'>
+          {footerdata.copyRight}
+        </Link>
       </div>
-      <hr className="mb-5" />
-      <div className="row">
-        <div className="col-lg-4 col-md-12 company">
-          <img src={footerdata.logo} alt="brand-logo" className="brand-logo" />
-          <Link to="/" className="title cursor-pointer">
-            <h3 className="fs-1">Oasis</h3>
-          </Link>
-          <p className="about-brand fs-3 lh-base">{footerdata.aboutBrand}</p>
-        </div>
-        <div className="col-lg-2 col">
-          <h5 className="title fs-3 py-5">Markerplace</h5>
-
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Art</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Photography</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Sports</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Virtual World</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Music</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Utility</li>
-        </div>
-        <div className="col-lg-2 col">
-          <h5 className="title fs-3 py-5">My Account</h5>
-
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Profile</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Favorites</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Watchlist</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">My Collections</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Settings</li>
-        </div>
-        <div className="col-lg-2 col">
-          <h5 className="title fs-3 py-5">Resources</h5>
-
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Help Center</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">
-            Platform Status
-          </li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Partners</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">
-            Gas-Free Marketplace
-          </li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Taxes</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Blog</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Docs</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Newsletter</li>
-        </div>
-        <div className="col-lg-2 col">
-          <h5 className="title fs-3 py-5">Company</h5>
-
-          <li className="item cursor-pointer mb-3 fs-4 py-2">About</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Careers</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Ventures</li>
-          <li className="item cursor-pointer mb-3 fs-4 py-2">Grants</li>
-        </div>
-      </div>
-
-      <Link to="/" className="copy-right fs-5">
-        {footerdata.copyRight}
-      </Link>
-    </>
+    </div>
   );
 }

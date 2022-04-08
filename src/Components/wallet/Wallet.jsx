@@ -1,21 +1,20 @@
-import React from "react";
-import { BsPersonCircle } from "react-icons/bs";
-import { Link } from "react-router-dom";
-import { ethers } from "ethers";
-import { MetamaskLanding } from "./MetamaskLanding";
+import React from 'react';
+import { BsPersonCircle } from 'react-icons/bs';
+import { ethers } from 'ethers';
 
-import "./wallet.css";
+import WalletCSS from './wallet.module.css';
+
 export const Wallet = (props) => {
   const connectWallet = async () => {
-    console.log(props);
+    // console.log(props);
     if (!props.stateData.isConnected) {
       const [account] = await window.ethereum.request({
-        method: "eth_requestAccounts",
+        method: 'eth_requestAccounts',
       });
       const provider = new ethers.providers.Web3Provider(window.ethereum);
       let balance = await provider.getBalance(account);
       balance = ethers.utils.formatEther(balance);
-      console.log(balance);
+      // console.log(balance);
       props.setStateData({
         ...props.stateData,
         isConnected: true,
@@ -25,38 +24,48 @@ export const Wallet = (props) => {
     }
   };
 
-  window.ethereum.on("accountsChanged", function (accounts) {
+  window.ethereum.on('accountsChanged', function (accounts) {
     connectWallet();
   });
 
-  if (!props.stateData.isConnected) {
-    return (
-      <div className="wallet">
-        <div className="wallet-header border-bottom">
-          <p className="Wallet-name fs-2">
-            <span className="profile-avtar me-3">
-              <BsPersonCircle size={36} />
-            </span>
-            My Wallet
-          </p>
-        </div>
-        <div className="wallet-body">
-          <p className="text subheading">
-            Connect with one of our available wallet providers or create a new
-            one.
-          </p>
+  return (
+    <div className={WalletCSS.Wallet}>
+      <div className={WalletCSS.WalletHeader}>
+        <p className={WalletCSS.WalletName}>
+          <span className='profile-avtar me-3'>
+            <BsPersonCircle size={36} />
+          </span>
+          My Wallet
+        </p>
+        {props.stateData.isConnected && (
+          <a
+            className={`${WalletCSS.WalletAddress} fs-3 cursor-pointer`}
+            title={props.stateData.account}
+          >
+            {props.stateData.account.slice(0, 4) +
+              '...' +
+              props.stateData.account.slice(38, 42)}
+          </a>
+        )}
+      </div>
+      <div className={WalletCSS.WalletBody}>
+        <p className='heading-tertiary '>
+          {props.stateData.isConnected
+            ? 'Total Balance'
+            : `Connect with one of our available wallet providers or create a new one.`}
+        </p>
+        {props.stateData.isConnected ? (
+          <p className={Wallet.Balance}>{props.stateData.balance} ETH</p>
+        ) : (
           <button
-            type="button"
-            href="/metamasklanding"
+            type='button'
             onClick={connectWallet}
-            className="btn btn-primary my-5"
+            className='btn btn-lg btn-primary px-5 py-3 fs-2'
           >
             MetaMask
           </button>
-        </div>
+        )}
       </div>
-    );
-  } else {
-    return <MetamaskLanding stateData={props.stateData} />;
-  }
+    </div>
+  );
 };

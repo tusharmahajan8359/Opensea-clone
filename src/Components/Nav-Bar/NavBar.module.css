@@ -1,0 +1,45 @@
+/* Navbar */
+.Navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #dee2e6 !important;
+  padding: 0.5rem 7rem;
+}
+.Brand {
+  font-size: 36px;
+}
+
+.ContainerSearch {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border: 1px solid var(--bg-accent-light);
+  border-radius: var(--border-radius-default);
+  padding: 0.1rem 0.4rem;
+}
+
+.ContainerSearch > .FormControl {
+  border: none;
+  font-size: medium;
+  box-shadow: none;
+}
+
+/* .container-search input:hover .container-search {
+  border: 2px solid var(--bg-accent-light);
+  box-shadow: 0px 0px 1px 5px rgba(0, 0, 0, 0.2);
+} */
+
+@media (max-width: 991.98px) {
+  .ContainerSearch {
+    margin-top: 1rem;
+  }
+  .navbar-nav {
+    text-align: center;
+  }
+}

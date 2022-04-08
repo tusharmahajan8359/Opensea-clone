@@ -1,9 +1,11 @@
-import React from 'react'
-import {Link} from "react-router-dom"
-export default function Brand({ brandName, brandLogoUrl }) {
-  //   console.log(props)
+import React from 'react';
+import { Link } from 'react-router-dom';
+export default function Brand({ navbarBrand, brandName, brandLogoUrl }) {
   return (
-    <Link className='navbar-brand fs-1 fw-bold' to='/'>
+    <Link
+      className={navbarBrand ? 'navbar-brand fw-bold me-4 fs-1' : 'brand'}
+      to='/'
+    >
       <img
         src={brandLogoUrl}
         alt={brandName}
@@ -13,5 +15,5 @@ export default function Brand({ brandName, brandLogoUrl }) {
       />
       {brandName}
     </Link>
-  )
+  );
 }

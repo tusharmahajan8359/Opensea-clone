@@ -1,13 +1,17 @@
 /* SECTION HERO */
 .section-hero {
   width: 100wh;
-  background-image: linear-gradient(rgba(238, 238, 238, 0.89), #fbfdff),
-    url(https://source.unsplash.com/collection/190727/500x500);
+  background-image: linear-gradient(
+      rgba(238, 238, 238, 0.89),
+      rgba(238, 238, 238, 1.9)
+    ),
+    url(https://lh3.googleusercontent.com/bXQ7PUJ2k_dzuIQMFrfiKJ0wKjGDeWm2EPDuNXqLiW6z9ZY5HnDagZl3Lhufv8rop_G9B9O7Pb7nqrj0gdyPXTH-=s550);
 
   background-size: cover;
-  background-position: right;
+  background-position: center;
   position: relative;
 }
+
 .section-hero > .container {
   height: 100%;
 }
@@ -17,7 +21,6 @@
   height: 74vh;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   justify-content: center;
 }
 .hero-description {
@@ -29,40 +32,47 @@
   display: flex;
   align-items: center;
   width: fit-content;
+  gap: 1.8rem;
 }
 
 /* HERO IMG CONTAINER  */
 .hero-img-container {
-  height: 74vh;
+  background-color: var(--bg-light);
+  height: 70vh;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-}
-
-.hero-img-container .nft-img {
-  border-radius: var(--border-radius);
-  height: 423px;
-  width: auto;
+  width: 100%;
+  border-radius: var(--border-radius-medium);
   overflow: hidden;
+  /* padding: 1.6rem auto; */
 }
-
-.hero-img-container-body {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.4rem 1rem;
-}
-.hero-img-container-body .user-info {
-  display: inline-block;
-}
-.user-info .user-info-name {
-  display: inline-block;
-  font-size: 1.8rem;
-  margin-left: 1rem;
-  color: var(--btn-color-primary);
+.hero-img-container .nft-img {
+  background-size: cover;
+  background-position: center;
 }
 /* CONTAINER BOTTOM */
 .container-bottom a:link {
-  font-size: 1.8rem;
+  font-size: 2rem;
   text-decoration: none;
+}
+
+@media (max-width: 991.98px) {
+  .section-hero {
+    text-align: center;
+  }
+  .hero-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto 20px;
+  }
+  .hero-img-container {
+    height: 360px;
+    width: auto;
+    /* margin: auto 0.5rem; */
+  }
+  .container-bottom a:link {
+    margin: 2rem auto;
+    text-align: center;
+  }
 }

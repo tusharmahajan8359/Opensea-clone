@@ -1,16 +1,16 @@
-import React from "react";
-import dataFeature from "./FeaturesData";
-import Feature from "./Feature";
+import React from 'react';
+import dataFeature from './FeaturesData';
+import Feature from './Feature';
 export const Features = () => {
   return (
-    <div className="container">
+    <div className='container features my-5'>
       <center>
-        <h1 className="title my-3">Create and sell your Features</h1>
+        <h1 className='heading-secondary'>Create and sell your Features</h1>
       </center>
-      <br />
-      <div className="container features row">
+
+      <div className='row g-3'>
         {dataFeature.map((data) => (
-          <div className="col-lg-3 col-md-12" key={data.id}>
+          <div className='col-lg-3' key={data.id}>
             <Feature
               id={data.id}
               icon={data.icon}

@@ -1,17 +1,17 @@
-import React from "react";
-import "./CreateNewItem.css";
-import { FaAsterisk, FaPlus, FaStar } from "react-icons/fa";
-import { useState, useEffect, useRef } from "react";
-import { useHistory } from "react-router-dom";
-import { ethers } from "ethers";
-import Collection from "../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
-import { create as ipfsHttpClient } from "ipfs-http-client";
+import React from 'react';
+import './CreateNewItem.css';
+import { FaAsterisk, FaPlus, FaStar } from 'react-icons/fa';
+import { useState, useEffect, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
+import { ethers } from 'ethers';
+import Collection from '../artifacts/contracts/CoreCollection.sol/CoreCollection.json';
+import { create as ipfsHttpClient } from 'ipfs-http-client';
 
-const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
 
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+const collectionAddress = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 
-const SAMPLE_TOKEN_URI = "http://test.com";
+const SAMPLE_TOKEN_URI = 'http://test.com';
 
 export const CreateNewItems = () => {
   const history = useHistory();
@@ -21,8 +21,8 @@ export const CreateNewItems = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [fileUrl, setFileUrl] = useState(null);
   const [formInput, updateFormInput] = useState({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
   });
   const [nftState, setNftState] = useState();
 
@@ -31,11 +31,11 @@ export const CreateNewItems = () => {
   let ItemId;
 
   useEffect(() => {
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0);
     const fetchCollections = async () => {
       let collectionNames = [];
       const [account] = await window.ethereum.request({
-        method: "eth_requestAccounts",
+        method: 'eth_requestAccounts',
       });
       setAccount(account);
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -70,15 +70,15 @@ export const CreateNewItems = () => {
       });
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
       setFileUrl(url);
-      console.log("Image URL: ", url);
+      console.log('Image URL: ', url);
     } catch (error) {
-      console.log("Error uploading file: ", error);
+      console.log('Error uploading file: ', error);
     }
-    console.log("Image Upload Complete");
+    console.log('Image Upload Complete');
   }
 
   async function uploadToIPFS() {
-    console.log("uploading to IPFS...");
+    console.log('uploading to IPFS...');
     if (!formInput.name || !fileUrl) return;
     /* first, upload to IPFS */
     const data = JSON.stringify({
@@ -89,16 +89,16 @@ export const CreateNewItems = () => {
       const added = await client.add(data);
       const url = `https://ipfs.infura.io/ipfs/${added.path}`;
 
-      console.log("Collection Link: ", url);
+      console.log('Collection Link: ', url);
       return url;
     } catch (error) {
-      console.log("Error uploading file: ", error);
+      console.log('Error uploading file: ', error);
     }
   }
 
-  window.ethereum.on("accountsChanged", async function () {
+  window.ethereum.on('accountsChanged', async function () {
     const [account] = await window.ethereum.request({
-      method: "eth_requestAccounts",
+      method: 'eth_requestAccounts',
     });
     setAccount(account);
     setSelectedCollection(null);
@@ -131,9 +131,9 @@ export const CreateNewItems = () => {
       .then(async (transaction) => {
         const tx = await transaction.wait();
         let event = await tx.events.find(
-          (event) => event.event === "NFTCreated"
+          (event) => event.event === 'NFTCreated'
         );
-        console.log("Item ID: ", parseInt(event.args[0]._hex, 16));
+        console.log('Item ID: ', parseInt(event.args[0]._hex, 16));
         ItemId = parseInt(event.args[0]._hex, 16);
       });
     const collectionId = await contract.userToCollectionIds(
@@ -155,117 +155,112 @@ export const CreateNewItems = () => {
       .then((data) => {
         obj.description = data.description;
         obj.image = data.image;
-        history.push("/CollectionDetails", { state: obj });
+        history.push('/CollectionDetails', { state: obj });
       });
   };
 
   return (
-    <div className="container">
-      <h1>Create New Item</h1>
-      <p className="sub-title text-muted">
-        <FaAsterisk className="text-danger m-2" size={8} />
+    <div className='container'>
+      <h1 className='heading-secondary mt-5 mb-3'>Create New Item</h1>
+      <small className='fs-5 text-muted'>
+        <FaAsterisk className='text-danger m-2' size={8} />
         Required field
-      </p>
-      <div className="mb-3">
-        <label htmlFor="formFile" className="form-label">
+      </small>
+      <div className='mb-3'>
+        <label htmlFor='formFile' className='form-label'>
           Image
-          <FaAsterisk className="text-danger m-2" size={8} />
+          <FaAsterisk className='text-danger m-2' size={8} />
         </label>
-        <p className="sub-title text-muted">Max size: 100 MB</p>
-        <input
-          type="file"
-          name="Asset"
-          className="my-4"
-          required
-          onChange={onFileUpload}
-        />
-        <br />
-        {fileUrl && <img className="rounded mt-4" width="350" src={fileUrl} />}
-        <br />
+        <small className='fs-5 text-muted'>Max size: 100 MB</small>
+        <div className='choose-file'>
+          <input type='file' name='Asset' required onChange={onFileUpload} />
+          {fileUrl && <img className='rounded' height='400' src={fileUrl} />}
+        </div>
       </div>
-      <div className="mb-3">
-        <label htmlFor="formFile" className="form-label">
+      <div className='mb-3'>
+        <label htmlFor='formFile' className='form-label'>
           Name
-          <FaAsterisk className="text-danger m-2" size={8} />
+          <FaAsterisk className='text-danger m-2' size={8} />
         </label>
         <input
-          className="form-control form-control-lg"
-          type="text"
+          className='form-control form-control-lg'
+          type='text'
           required
           onChange={(e) =>
             updateFormInput({ ...formInput, name: e.target.value })
           }
-          placeholder="item name"
+          placeholder='item name'
         />
       </div>
 
-      <div className="mb-3">
-        <label htmlFor="formFile" className="form-label">
+      <div className='mb-3'>
+        <label htmlFor='formFile' className='form-label'>
           External link
         </label>
-        <p className="sub-title text-muted">
+        <small className='fs-5 text-muted'>
           This would be the ipfs link to the image.
-        </p>
+        </small>
         <input
-          className="form-control form-control-lg"
-          type="text"
+          className='form-control form-control-lg'
+          type='text'
           disabled={true}
           placeholder={fileUrl}
-          aria-label=".form-control-lg example"
+          aria-label='.form-control-lg example'
         />
       </div>
 
-      <div className="mb-3">
-        <label htmlFor="description" className="form-label">
+      <div className='mb-3'>
+        <label htmlFor='description' className='form-label'>
           Description
         </label>
-        <p className="sub-title text-muted">
+        <small className='fs-5 text-muted'>
           The description will be included on the item's detail page underneath
           its image. Markdown syntax is supported.
-        </p>
+          <FaAsterisk className='text-danger m-2' size={8} />
+        </small>
         <textarea
-          className="form-control"
-          id="description"
-          placeholder="Provide a detailed description of your item."
+          className='form-control fs-3'
+          id='description'
+          placeholder='Provide a detailed description of your item.'
           onChange={(e) =>
             updateFormInput({ ...formInput, description: e.target.value })
           }
-          rows="4"
-          columns="5"
+          rows='4'
+          columns='5'
         ></textarea>
       </div>
 
-      <div className="mb-3 collection">
-        <label htmlFor="collection" className="form-label">
+      <div className='mb-3 collection'>
+        <label htmlFor='collection' className='form-label'>
           Collection
         </label>
-        <p className="sub-title text-muted">
+        <small className='fs-5 text-muted'>
           This is the collection where your item will appear.
           <span
-            className="d-inline-block"
-            tabIndex="0"
-            data-bs-toggle="popover"
-            data-bs-trigger="hover focus"
-            data-bs-content="Moving items to a different collection may take up to 30 minutes. You can manage your collections here."
+            className='d-inline-block'
+            tabIndex='0'
+            data-bs-toggle='popover'
+            data-bs-trigger='hover focus'
+            data-bs-content='Moving items to a different collection may take up to 30 minutes. You can manage your collections here.'
           >
-            <button className="btn i-btn" type="button" disabled>
+            <button className='btn i-btn' type='button' disabled>
               i
             </button>
           </span>
-        </p>
+        </small>
         {collections.length === 0 ? (
-          <h1>No Collections!</h1>
+          <h1 className='fs-4'>No Collections!</h1>
         ) : (
           <select
-            className="form-select form-select-lg mb-4"
-            id="collection"
-            placeholder="Select collection"
+            className='form-select form-select-lg mb-4'
+            id='collection'
+            placeholder='Select collection'
             onChange={(e) => {
               handleChange(e.target.value || null);
               console.log(e.target.value);
             }}
           >
-            <option value={""} defaultChecked>
+            <option value={''} defaultChecked>
               Select
             </option>
             {collections.map((collect_name) => (
@@ -278,7 +273,7 @@ export const CreateNewItems = () => {
       </div>
 
       <button
-        className="btn btn-lg fs-2 btn-outline-primary px-4 my-5 mx-5"
+        className='btn btn-lg fs-1 btn-outline-primary px-4 py-2 my-5'
         disabled={isDisabled}
         onClick={createNFT}
       >
