@@ -56,7 +56,7 @@ export default function Navbar(props) {
         </div>
       </nav>
       {wallet && (
-        <Wallet stateData={props.stateData} setStateData={props.setStateData} />
+        <Wallet stateData={props.stateData} setStateData={props.setStateData} setWallet={ setWallet}/>
       )}
     </>
   );

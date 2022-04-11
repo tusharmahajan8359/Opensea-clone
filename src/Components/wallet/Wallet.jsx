@@ -2,6 +2,7 @@ import React from 'react';
 import { BsPersonCircle } from 'react-icons/bs';
 import { ethers } from 'ethers';
 
+import OutsideClickHandler from 'react-outside-click-handler';
 import WalletCSS from './wallet.module.css';
 
 export const Wallet = (props) => {
@@ -29,43 +30,45 @@ export const Wallet = (props) => {
   });
 
   return (
-    <div className={WalletCSS.Wallet}>
-      <div className={WalletCSS.WalletHeader}>
-        <p className={WalletCSS.WalletName}>
-          <span className='profile-avtar me-3'>
-            <BsPersonCircle size={36} />
-          </span>
-          My Wallet
-        </p>
-        {props.stateData.isConnected && (
-          <a
-            className={`${WalletCSS.WalletAddress} fs-3 cursor-pointer`}
-            title={props.stateData.account}
-          >
-            {props.stateData.account.slice(0, 4) +
-              '...' +
-              props.stateData.account.slice(38, 42)}
-          </a>
-        )}
+    <OutsideClickHandler onOutsideClick={() => props.setWallet(false)}>
+      <div className={WalletCSS.Wallet}>
+        <div className={WalletCSS.WalletHeader}>
+          <p className={WalletCSS.WalletName}>
+            <span className='profile-avtar me-3'>
+              <BsPersonCircle size={36} />
+            </span>
+            My Wallet
+          </p>
+          {props.stateData.isConnected && (
+            <a
+              className={`${WalletCSS.WalletAddress} fs-3 cursor-pointer`}
+              title={props.stateData.account}
+            >
+              {props.stateData.account.slice(0, 4) +
+                '...' +
+                props.stateData.account.slice(38, 42)}
+            </a>
+          )}
+        </div>
+        <div className={WalletCSS.WalletBody}>
+          <p className='heading-tertiary '>
+            {props.stateData.isConnected
+              ? 'Total Balance'
+              : `Connect with one of our available wallet providers or create a new one.`}
+          </p>
+          {props.stateData.isConnected ? (
+            <p className={Wallet.Balance}>{props.stateData.balance} ETH</p>
+          ) : (
+            <button
+              type='button'
+              onClick={connectWallet}
+              className='btn btn-lg btn-primary px-5 py-3 fs-2'
+            >
+              MetaMask
+            </button>
+          )}
+        </div>
       </div>
-      <div className={WalletCSS.WalletBody}>
-        <p className='heading-tertiary '>
-          {props.stateData.isConnected
-            ? 'Total Balance'
-            : `Connect with one of our available wallet providers or create a new one.`}
-        </p>
-        {props.stateData.isConnected ? (
-          <p className={Wallet.Balance}>{props.stateData.balance} ETH</p>
-        ) : (
-          <button
-            type='button'
-            onClick={connectWallet}
-            className='btn btn-lg btn-primary px-5 py-3 fs-2'
-          >
-            MetaMask
-          </button>
-        )}
-      </div>
-    </div>
+    </OutsideClickHandler>
   );
 };

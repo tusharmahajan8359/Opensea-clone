@@ -14,6 +14,9 @@ import CollectionDetails from './Components/Nav-Bar/profile/CollectionDetails';
 import ViewNft from './Components/NFT/ViewNft';
 import { useEffect, useState } from 'react';
 
+//
+// import from './Components/NFT/ViewNft.jsx'
+
 function App() {
   const [state, setState] = useState({ isConnected: false });
 
