@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./ViewNFT.css";
 import {
@@ -44,7 +44,7 @@ const ViewNft = () => {
   const [sendnftmodal, setSendNftModal] = useState(false);
   const [offerModal, setOfferModal] = useState(false);
   const [offerstate, setOfferState] = useState(true);
-
+  const ref = useRef();
   let tokenOwner;
   let provider;
   let contract;
@@ -185,7 +185,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => {};
+  const getItemStatus = async () => { };
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -206,7 +206,7 @@ const ViewNft = () => {
       }
     );
     await tx.wait();
-    setOfferState(true);
+    // ref.current.getTableData();
   };
   funct();
   getItemStatus();
@@ -402,7 +402,12 @@ const ViewNft = () => {
               <div className="accordion" id="accordionExample">
                 <NFTListing />
 
-                <NFTOffer TOKENID={TOKENID} Contract={marketContract}/>
+                <NFTOffer
+                  // ref={ref}
+                  TOKENID={TOKENID}
+                  Contract={marketContract}
+                  isDisabled={isDisabled}
+                />
               </div>
             </div>
           </div>
