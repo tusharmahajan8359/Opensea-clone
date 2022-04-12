@@ -43,7 +43,7 @@ const ViewNft = () => {
   const [lowerpriceModal, setLowerPriceModal] = useState(false);
   const [sendnftmodal, setSendNftModal] = useState(false);
   const [offerModal, setOfferModal] = useState(false);
-  const [offerstate, setOfferState] = useState(true)
+  const [offerstate, setOfferState] = useState(true);
 
   let tokenOwner;
   let provider;
@@ -185,7 +185,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => { };
+  const getItemStatus = async () => {};
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -195,9 +195,9 @@ const ViewNft = () => {
   };
 
   const handleMakeOffer = async (offerprice) => {
-    setOfferModal(false)
+    setOfferModal(false);
     console.log(TOKENID, offerprice);
-    await marketContract.makeOffer(
+    const tx = await marketContract.makeOffer(
       TOKENID,
       ethers.utils.parseEther(offerprice.toString()),
       collectionAddress,
@@ -205,8 +205,8 @@ const ViewNft = () => {
         value: ethers.utils.parseEther(offerprice.toString()),
       }
     );
+    await tx.wait();
     setOfferState(true);
-
   };
   funct();
   getItemStatus();
@@ -402,7 +402,7 @@ const ViewNft = () => {
               <div className="accordion" id="accordionExample">
                 <NFTListing />
 
-                <NFTOffer TOKENID={TOKENID} />
+                <NFTOffer TOKENID={TOKENID} Contract={marketContract}/>
               </div>
             </div>
           </div>
