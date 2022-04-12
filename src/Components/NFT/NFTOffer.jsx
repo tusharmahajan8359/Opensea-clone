@@ -9,33 +9,44 @@ const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
 const NFTOffer = ({ TOKENID }) => {
     const [offerList, setOfferList] = useState([]);
+    let contract;
 
     useEffect(async () => {
+
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
-        const contract = new ethers.Contract(
+        contract = new ethers.Contract(
             marketAddress,
             Market.abi,
             signer
         );
+        // setOfferList([])
+        const offers = await contract.getOfferIds(TOKENID);
+        let offerList = [];
+        for (let i = 0; i < offers.length; i++) {
+            const offer = {
+                user: await contract.offerIdToUser(offers[i]),
+                price: await contract.offerIdToPrice(offers[i]),
+                status: await contract.offerStatus(offers[i]),
+                offerId: offers[i]
+            }
+            // console.log(offer)
+            offerList.push(offer);
 
-        // const offers = await contract.idToOffers(TOKENID);
-        // for (let i = 0; i < offers.length; i++) {
-        //     const offer = {
-        //         user: await contract.offerIdToUser(offers[i]),
-        //         price: await contract.offerIdToPrice(offers[i]),
-        //         status: await contract.offerStatus(offers[i])
-        //     }
-        //     setOfferList((old) => {
-        //         return [...old, offer];
-        //     })
 
-        // }
+        }
+        setOfferList(offerList);
 
     }, [])
 
-    const aceeptOffer = async (user) => {
-        //  await contract.offerIdToUser(offers[i]) 
+    const acceptOffer = async (index) => { // tkn ,index,collection
+        // console.log()
+        await contract.acceptOffer(
+            TOKENID,
+            index,
+            collectionAddress
+        )
+        console.log("buy")
     }
 
     return (
@@ -66,26 +77,35 @@ const NFTOffer = ({ TOKENID }) => {
                                     <th scope="col">#</th>
                                     <th scope="col">price</th>
                                     <th scope="col">User</th>
-                                    <th scope="col">status</th>
+
                                 </tr>
                             </thead>
                             <tbody>
-                                {offerList.map((data, index) => {
 
-                                    <tr>
-                                        <th scope="row">{index + 1}</th>
-                                        <td>{data.price}</td>
-                                        <td>{data.user}</td>
-                                        <td>{data.status}</td>
-                                        <td>
-                                            <button type="button"
-                                                className="btn btn-primary"
-                                                onClick={() => aceeptOffer(data.user)}
-                                            >
-                                                Accept Offer
-                                            </button>
-                                        </td>
-                                    </tr>
+                                {offerList.map((data, index) => {
+                                    const price = ethers.utils.formatEther("" + JSON.parse(data.price));
+
+                                    return (
+
+                                        <tr key={index}>
+                                            <th scope="row">{index + 1}</th>
+                                            <td>{price}</td>
+                                            <td title={data.user}>
+                                                {data.user.slice(0, 4) +
+                                                    "..." + data.user.slice(39, 42)}
+
+                                            </td>
+
+                                            <td>
+                                                <button type="button"
+                                                    className="btn btn-primary"
+                                                    onClick={() => acceptOffer(index)}
+                                                >
+                                                    Accept Offer
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    )
                                 })}
 
                             </tbody>

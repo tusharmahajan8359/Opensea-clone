@@ -17,6 +17,7 @@ import SendNftModal from "../modal/SendNftModal";
 import NFTOffer from "./NFTOffer";
 import NFTListing from "./NFTListing";
 import NFTDescription from "./NFTDescription";
+import NFTOfferModal from "../modal/NFTOfferModal";
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -41,7 +42,8 @@ const ViewNft = () => {
   const [sellModal, setSellModal] = useState(false);
   const [lowerpriceModal, setLowerPriceModal] = useState(false);
   const [sendnftmodal, setSendNftModal] = useState(false);
-  // const [state, setState] = useState()
+  const [offerModal, setOfferModal] = useState(false);
+  const [offerstate, setOfferState] = useState(true)
 
   let tokenOwner;
   let provider;
@@ -183,7 +185,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => {};
+  const getItemStatus = async () => { };
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -193,6 +195,7 @@ const ViewNft = () => {
   };
 
   const handleMakeOffer = async (offerprice) => {
+    setOfferModal(false)
     console.log(TOKENID, offerprice);
     await marketContract.makeOffer(
       TOKENID,
@@ -202,10 +205,8 @@ const ViewNft = () => {
         value: ethers.utils.parseEther(offerprice.toString()),
       }
     );
+    setOfferState(true);
 
-    // const ofs = await marketContract.idToOffers(TOKENID, 0)
-    // console.log(ofs)
-    // console.log(makeoffer)
   };
   funct();
   getItemStatus();
@@ -369,11 +370,19 @@ const ViewNft = () => {
                         </button>
                         <button
                           className="btn btn-lg btn-outline-primary m-3"
-                          onClick={() => handleMakeOffer(1)}
+                          // onClick={() => handleMakeOffer(1)}
+                          onClick={() => setOfferModal(true)}
                         >
                           <BsFillTagsFill className="mx-3" size={24} />
                           Make Offer
                         </button>
+                        {offerModal && (
+                          <NFTOfferModal
+                            show={offerModal}
+                            handleClose={setOfferModal}
+                            offer={handleMakeOffer}
+                          />
+                        )}
                       </div>
                     ) : (
                       <div>
@@ -392,7 +401,8 @@ const ViewNft = () => {
 
               <div className="accordion" id="accordionExample">
                 <NFTListing />
-                <NFTOffer />
+
+                <NFTOffer TOKENID={TOKENID} />
               </div>
             </div>
           </div>

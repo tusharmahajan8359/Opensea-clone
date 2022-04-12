@@ -313,4 +313,12 @@ contract Market is IMarket {
 
         emit priceLowered(_tokenId, _loweredPrice);
     }
+
+    function getOfferIds(uint256 _tokenId)
+        external
+        view
+        returns (uint256[] memory)
+    {
+        return idToOffers[_tokenId];
+    }
 }
