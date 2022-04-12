@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./ViewNFT.css";
-import { BsFillTagsFill, BsThreeDotsVertical, BsShareFill } from "react-icons/bs";
+import {
+  BsFillTagsFill,
+  BsThreeDotsVertical,
+  BsShareFill,
+} from "react-icons/bs";
 import { FaEthereum, FaWallet } from "react-icons/fa";
 import { FiSend } from "react-icons/fi";
 import { ethers } from "ethers";
@@ -10,10 +14,9 @@ import Market from "../../artifacts/contracts/Market.sol/Market.json";
 import SellModal from "../modal/SellModal";
 import LowerPriceModal from "../modal/LowerPriceModal";
 import SendNftModal from "../modal/SendNftModal";
-import NFTOffer from "./NFTOffer"
+import NFTOffer from "./NFTOffer";
 import NFTListing from "./NFTListing";
 import NFTDescription from "./NFTDescription";
-
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -49,7 +52,7 @@ const ViewNft = () => {
   let TOKENID = parseInt(state.id._hex, 16);
 
   useEffect(async () => {
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
     const func = async () => {
       account = await provider.listAccounts();
 
@@ -139,7 +142,11 @@ const ViewNft = () => {
       { value: ethers.utils.parseEther("0.25") }
     );
     await tx.wait();
-    setNftData({ ...nftData, currentPrice: sellprice.toString(), onSale: true });
+    setNftData({
+      ...nftData,
+      currentPrice: sellprice.toString(),
+      onSale: true,
+    });
     setItemStatus(true);
   };
 
@@ -176,7 +183,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => { };
+  const getItemStatus = async () => {};
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -186,16 +193,20 @@ const ViewNft = () => {
   };
 
   const handleMakeOffer = async (offerprice) => {
-    console.log(TOKENID, offerprice)
-    await marketContract.makeOffer(TOKENID,
-      ethers.utils.parseEther(offerprice), collectionAddress, {
-      value: ethers.utils.parseEther(offerprice),
-    })
+    console.log(TOKENID, offerprice);
+    await marketContract.makeOffer(
+      TOKENID,
+      ethers.utils.parseEther(offerprice.toString()),
+      collectionAddress,
+      {
+        value: ethers.utils.parseEther(offerprice.toString()),
+      }
+    );
 
-    const ofs = await marketContract.idToOffers(TOKENID, 0)
-    console.log(ofs)
+    // const ofs = await marketContract.idToOffers(TOKENID, 0)
+    // console.log(ofs)
     // console.log(makeoffer)
-  }
+  };
   funct();
   getItemStatus();
   return (
@@ -269,12 +280,11 @@ const ViewNft = () => {
               </div>
             </div>
 
-            <NFTDescription nftData={nftData}
+            <NFTDescription
+              nftData={nftData}
               TOKENID={TOKENID}
               collectionAddress={collectionAddress}
             />
-
-
           </div>
           <div className="col-md-7">
             <div className="nft-text-container">
@@ -358,7 +368,6 @@ const ViewNft = () => {
                           Buy Now
                         </button>
                         <button
-
                           className="btn btn-lg btn-outline-primary m-3"
                           onClick={() => handleMakeOffer(1)}
                         >
@@ -377,7 +386,6 @@ const ViewNft = () => {
                         </button>
                       </div>
                     )}
-
                   </div>
                 </div>
               )}

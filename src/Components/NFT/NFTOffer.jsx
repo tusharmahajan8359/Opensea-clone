@@ -19,18 +19,18 @@ const NFTOffer = ({ TOKENID }) => {
             signer
         );
 
-        const offers = await contract.idToOffers(TOKENID);
-        for (let i = 0; i < offers.length; i++) {
-            const offer = {
-                user: await contract.offerIdToUser(offers[i]),
-                price: await contract.offerIdToPrice(offers[i]),
-                status: await contract.offerStatus(offers[i])
-            }
-            setOfferList((old) => {
-                return [...old, offer];
-            })
+        // const offers = await contract.idToOffers(TOKENID);
+        // for (let i = 0; i < offers.length; i++) {
+        //     const offer = {
+        //         user: await contract.offerIdToUser(offers[i]),
+        //         price: await contract.offerIdToPrice(offers[i]),
+        //         status: await contract.offerStatus(offers[i])
+        //     }
+        //     setOfferList((old) => {
+        //         return [...old, offer];
+        //     })
 
-        }
+        // }
 
     }, [])
 
