@@ -223,22 +223,33 @@ contract Market is IMarket {
             msg.sender == IERC721(_coreCollection).ownerOf(_tokenId),
             "Only owner can accept the offer"
         );
+
         uint256 _offerId = idToOffers[_tokenId][_offerIndex];
+
         address _buyer = offerIdToUser[_offerId];
+
         payable(msg.sender).transfer(offerIdToPrice[_offerId]);
 
         //return the remaining offer balance to respective owners
+
         for (uint256 i = 0; i < idToOffers[_tokenId].length; i++) {
             uint256 offerId = idToOffers[_tokenId][i];
+
             if (offerId != _offerId) {
-                address user = offerIdToUser[offerId];
-                payable(user).transfer(offerIdToPrice[offerId]);
+                if (offerStatus[offerId]) {
+                    address user = offerIdToUser[offerId];
+
+                    payable(user).transfer(offerIdToPrice[offerId]);
+                }
             }
+
             offerStatus[offerId] = false;
         }
 
         idToOnSale[_tokenId] = false;
+
         idToPrice[_tokenId] = 0;
+
         sendNFT(_tokenId, _buyer, _coreCollection);
 
         emit OfferAccepted(_tokenId, offerIdToPrice[_offerId]);
@@ -250,6 +261,7 @@ contract Market is IMarket {
      * @param _offerIndex {uint256} Index of offers array returned from the mapping
      * @param _coreCollection {address} Address of the CoreCollection Contract
      */
+
     function cancelOffer(
         uint256 _tokenId,
         uint256 _offerIndex,
@@ -261,11 +273,15 @@ contract Market is IMarket {
         );
 
         uint256 _offerId = idToOffers[_tokenId][_offerIndex];
+
         require(
             msg.sender == offerIdToUser[_offerId],
             "Unauthorized person trying to cancel the listing"
         );
+
         offerStatus[_offerId] = false;
+
+        payable(msg.sender).transfer(offerIdToPrice[_offerId]);
 
         emit OfferCanceled(_tokenId, _offerId);
     }

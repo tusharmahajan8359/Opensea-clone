@@ -8,25 +8,24 @@ export default function NavItem({ items, handleWallet }) {
       {items.map((item, index) => (
         <li key={index} className='nav-item dropdown'>
           <NavLink
-            to={'/' + item.itemTitle}
+            to={'/' + item.itemTitle.toLowerCase()}
             className={`nav-link fs-2  ${NavItemCSS.NavLink}`}
             id='dropdownMenuLink'
             aria-expanded='false'
-            // data-bs-toggle='dropdown'
+          // data-bs-toggle='dropdown'
           >
             {item.itemTitle}
           </NavLink>
           <ul
-            className={` ${
-              item.dropdownItems.length > 0 ? `dropdown-menu` : 'd-none'
-            }`}
+            className={` ${item.dropdownItems.length > 0 ? `dropdown-menu` : 'd-none'
+              }`}
             aria-labelledby='dropdownMenuLink'
           >
             {item.dropdownItems.map((Item, index) => (
               <li key={index}>
                 <Link
                   className={`dropdown-item ${NavItemCSS.DropdownItem}`}
-                  to={'/' + Item}
+                  to={'/' + Item.toLowerCase()}
                 >
                   {Item}
                 </Link>

@@ -19,7 +19,7 @@ export const CreateCollection = () => {
   const history = useHistory();
 
   useEffect(() => {
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
   }, [])
   async function onFileUpload(e) {
     const file = e.target.files[0];
@@ -77,7 +77,7 @@ export const CreateCollection = () => {
           (event) => event.event === "CollectionCreated"
         );
         console.log("Collection ID: ", parseInt(event.args[1]._hex, 16));
-        history.push("/my Collections");
+        history.push("/my-collections");
       })
       .catch((err) => {
         console.log(err);

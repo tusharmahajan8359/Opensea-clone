@@ -2,17 +2,18 @@ import React from "react";
 import "./ExploreCard.css";
 import { useHistory, useNavigate } from "react-router-dom";
 
-const ExploreCard = ({collectiondata}) => {
+const ExploreCard = ({ collectiondata }) => {
   const history = useHistory();
   const handleClick = () => {
-    history.push("/CollectionDetails", { state: collectiondata });
+    console.log(collectiondata)
+    history.push(`/collection-details/${collectiondata.id}`, { state: collectiondata });
   };
 
   return (
     <div className="card h-100" onClick={handleClick}>
       <img
         src={collectiondata.image}
-        className="card-img-top"
+        className='rounded mx-auto d-block'
         alt="..."
         style={{ height: "18rem" }}
       />

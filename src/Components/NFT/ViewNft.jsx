@@ -1,20 +1,19 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./ViewNFT.css";
-import {
-  BsFillTagsFill,
-  BsThreeDotsVertical,
-  BsShareFill,
-} from "react-icons/bs";
+import { BsFillTagsFill, BsThreeDotsVertical, BsShareFill } from "react-icons/bs";
 import { FaEthereum, FaWallet } from "react-icons/fa";
 import { FiSend } from "react-icons/fi";
 import { ethers } from "ethers";
-import { useState } from "react";
 import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
 import SellModal from "../modal/SellModal";
 import LowerPriceModal from "../modal/LowerPriceModal";
 import SendNftModal from "../modal/SendNftModal";
+import NFTOffer from "./NFTOffer"
+import NFTListing from "./NFTListing";
+import NFTDescription from "./NFTDescription";
+
 
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -50,7 +49,7 @@ const ViewNft = () => {
   let TOKENID = parseInt(state.id._hex, 16);
 
   useEffect(async () => {
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0)
     const func = async () => {
       account = await provider.listAccounts();
 
@@ -122,7 +121,7 @@ const ViewNft = () => {
     console.log("transfer complete");
     setOwner(_recepient);
   };
-  const listForSale = async (selldata) => {
+  const listForSale = async (sellprice) => {
     setSellModal(false);
 
     const isApproved = await contract.isApprovedForAll(
@@ -135,12 +134,12 @@ const ViewNft = () => {
     }
     const tx = await marketContract.createMarketItem(
       TOKENID,
-      ethers.utils.parseEther(selldata),
+      ethers.utils.parseEther(sellprice),
       "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       { value: ethers.utils.parseEther("0.25") }
     );
     await tx.wait();
-    setNftData({ ...nftData, currentPrice: selldata.toString(), onSale: true });
+    setNftData({ ...nftData, currentPrice: sellprice.toString(), onSale: true });
     setItemStatus(true);
   };
 
@@ -177,7 +176,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => {};
+  const getItemStatus = async () => { };
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -185,15 +184,25 @@ const ViewNft = () => {
     contract = new ethers.Contract(collectionAddress, Collection.abi, signer);
     marketContract = new ethers.Contract(marketAddress, Market.abi, signer);
   };
+
+  const handleMakeOffer = async (offerprice) => {
+    console.log(TOKENID, offerprice)
+    await marketContract.makeOffer(TOKENID,
+      ethers.utils.parseEther(offerprice), collectionAddress, {
+      value: ethers.utils.parseEther(offerprice),
+    })
+
+    const ofs = await marketContract.idToOffers(TOKENID, 0)
+    console.log(ofs)
+    // console.log(makeoffer)
+  }
   funct();
   getItemStatus();
   return (
     <main className="section-view-nft">
       <div className="nav-item position-sticky">
         <div className="mr-0 sticky-top">
-          {isDisabled ? (
-            <div></div>
-          ) : (
+          {isDisabled || (
             <div>
               {itemStatus ? (
                 <div>
@@ -259,74 +268,13 @@ const ViewNft = () => {
                 />
               </div>
             </div>
-            <div className="accordion" id="">
-              <div className="accordion-item discription">
-                <h2
-                  className="accordion-header "
-                  id="panelsStayOpen-headingOne"
-                >
-                  <button
-                    className="accordion-button  fs-2"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#panelsStayOpen-collapseOne"
-                    aria-expanded="true"
-                    aria-controls="panelsStayOpen-collapseOne"
-                  >
-                    Description
-                  </button>
-                </h2>
-                <div
-                  id="panelsStayOpen-collapseOne "
-                  className="accordion-collapse collapse show"
-                  aria-labelledby="panelsStayOpen-headingOne"
-                >
-                  <div className="accordion-body  fs-3">
-                    <p className="text-muted">
-                      Created by{" "}
-                      <span className="text-primary fs-5">
-                        {nftData.creator}
-                      </span>
-                    </p>
-                    <p className="description">{nftData.description}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="accordion-item detail">
-                <h2 className="accordion-header" id="panelsStayOpen-headingTwo">
-                  <button
-                    className="accordion-button fs-2 collapsed"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#panelsStayOpen-collapseTwo"
-                    aria-expanded="false"
-                    aria-controls="panelsStayOpen-collapseTwo"
-                  >
-                    Details
-                  </button>
-                </h2>
-                <div
-                  id="panelsStayOpen-collapseTwo"
-                  className="accordion-collapse collapse"
-                  aria-labelledby="panelsStayOpen-headingTwo"
-                >
-                  <div className="accordion-body fs-3 py-5">
-                    <div className="detail-item contract-address">
-                      <p className="title">Contract Address</p>
-                      <p className="text ms-5 text-truncate address">
-                        {collectionAddress}
-                      </p>
-                    </div>
-                    <div className="detail-item contract-address">
-                      <p className="title">Token Id</p>
-                      <p className="text ms-5 text-truncate address">
-                        #{TOKENID}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+
+            <NFTDescription nftData={nftData}
+              TOKENID={TOKENID}
+              collectionAddress={collectionAddress}
+            />
+
+
           </div>
           <div className="col-md-7">
             <div className="nft-text-container">
@@ -380,11 +328,11 @@ const ViewNft = () => {
               <div className="about-nft">
                 <p className="nft-name fs-2 mb-3">{nftData.nftName}</p>
                 <p className="owner text-muted fs-4">
-                  owned by{" "}
+                  owned by
                   <span className="text-primary cursor-pointer">{owner}</span>
                 </p>
               </div>
-              {nftData.onSale ? (
+              {nftData.onSale && (
                 <div className="card pricing-card">
                   <div className="card-header fs-3">Current Price</div>
                   <div className="card-body">
@@ -410,8 +358,9 @@ const ViewNft = () => {
                           Buy Now
                         </button>
                         <button
-                          
+
                           className="btn btn-lg btn-outline-primary m-3"
+                          onClick={() => handleMakeOffer(1)}
                         >
                           <BsFillTagsFill className="mx-3" size={24} />
                           Make Offer
@@ -428,123 +377,14 @@ const ViewNft = () => {
                         </button>
                       </div>
                     )}
-                    {/* <Link to="#" className="btn btn-lg btn-primary m-3">
-                    <FaWallet className="mx-3" size={24} />
-                    Buy Now
-                  </Link>
-                  <Link to="#" className="btn btn-lg btn-outline-primary m-3">
-                    <BsFillTagsFill className="mx-3" size={24} />
-                    Make Offer
-                  </Link> */}
+
                   </div>
                 </div>
-              ) : (
-                <div></div>
               )}
 
               <div className="accordion" id="accordionExample">
-                <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingTwo">
-                    <button
-                      className="accordion-button fs-2 collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseTwo"
-                      aria-expanded="false"
-                      aria-controls="collapseTwo"
-                    >
-                      Listing
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseTwo"
-                    className="accordion-collapse collapse"
-                    aria-labelledby="headingTwo"
-                    data-bs-parent="#accordionExample"
-                  >
-                    <div className="accordion-body fs-3">
-                      <div className="table-responsive-md">
-                        <table className="table">
-                          <thead>
-                            <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">First</th>
-                              <th scope="col">Last</th>
-                              <th scope="col">Handle</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <th scope="row">1</th>
-                              <td>Mark</td>
-                              <td>Otto</td>
-                              <td>@mdo</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btn-primary"
-                                >
-                                  Cancel
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="accordion-item">
-                  <h2 className="accordion-header" id="headingThree">
-                    <button
-                      className="accordion-button fs-2 collapsed"
-                      type="button"
-                      data-bs-toggle="collapse"
-                      data-bs-target="#collapseThree"
-                      aria-expanded="false"
-                      aria-controls="collapseThree"
-                    >
-                      Offers
-                    </button>
-                  </h2>
-                  <div
-                    id="collapseThree"
-                    className="accordion-collapse collapse"
-                    aria-labelledby="headingThree"
-                    data-bs-parent="#accordionExample"
-                  >
-                    <div className="accordion-body fs-3">
-                      <div className="table-responsive-md">
-                        <table className="table">
-                          <thead>
-                            <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">First</th>
-                              <th scope="col">Last</th>
-                              <th scope="col">Handle</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <th scope="row">1</th>
-                              <td>Mark</td>
-                              <td>Otto</td>
-                              <td>@mdo</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  className="btn btn-primary"
-                                >
-                                  Buy
-                                </button>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <NFTListing />
+                <NFTOffer />
               </div>
             </div>
           </div>

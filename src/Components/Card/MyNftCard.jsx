@@ -6,7 +6,7 @@ const MyNftCard = ({ nftdata }) => {
   const history = useHistory();
 
   const handleViewNft = () => {
-    history.push('/Explore/Nft', { state: nftdata });
+    history.push('/explore/nft', { state: nftdata });
   };
   return (
     <>
@@ -14,7 +14,7 @@ const MyNftCard = ({ nftdata }) => {
         <div className='card h-100'>
           <img
             src={nftdata.image}
-            className='card-img-top'
+            className="card-img-top"
             alt='...'
             style={{ height: '18rem' }}
           />

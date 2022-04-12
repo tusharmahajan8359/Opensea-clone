@@ -155,7 +155,7 @@ export const CreateNewItems = () => {
       .then((data) => {
         obj.description = data.description;
         obj.image = data.image;
-        history.push('/CollectionDetails', { state: obj });
+        history.push(`/collection-details/${obj.id}`, { state: obj });
       });
   };
 

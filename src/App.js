@@ -30,11 +30,11 @@ function App() {
           <Features />
         </Route>
 
-        <Route path='/Explore' exact>
+        <Route path='/explore' exact>
           <Explore />
         </Route>
 
-        <Route path='/Help center'>
+        <Route path='/help-center'>
           <HelpDesk />
         </Route>
 
@@ -42,18 +42,18 @@ function App() {
           <CreateNewItems />
         </Route>
 
-        <Route path='/my Collections' exact>
+        <Route path='/my-collections' exact>
           <MyCollection />
         </Route>
 
-        <Route path='/my collections/create' exact>
+        <Route path='/my-collections/create' exact>
           <CreateCollection />
         </Route>
-        <Route path='/Explore/Nft' exact>
+        <Route path='/explore/nft' exact>
           <ViewNft />
         </Route>
 
-        <Route path='/CollectionDetails' exact>
+        <Route path='/collection-details/:id' exact>
           <CollectionDetails />
         </Route>
         <Route path='*'>

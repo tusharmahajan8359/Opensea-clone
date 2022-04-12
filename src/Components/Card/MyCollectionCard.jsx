@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./ExploreCard.css";
 import { useHistory } from "react-router-dom";
 
 const MyCollectionCard = ({ collection }) => {
@@ -8,33 +7,35 @@ const MyCollectionCard = ({ collection }) => {
   const handleClick = () => {
     console.log("my clicked collection", collection);
 
-    history.push("/CollectionDetails", { state: collection });
+    history.push(`/collection-details/${collection.id}`, { state: collection });
   };
 
   return (
     <>
-      <div className=" col" onClick={handleClick}>
-        <div className="card h-100">
+      <div className="col" onClick={handleClick}>
+        <div className="card h-100 box-shadow">
+
           <img
             src={collection.image}
-            className="card-img-top"
+            className="mx-auto d-block"
             alt="..."
-            style={{ height: "18rem" }}
+            style={{ height: "24rem", width: "100%" }}
           />
+
           <div className="body text-center">
-            <h4 className="card-title mt-5 mb-3">{collection.name}</h4>
-            <p className="author mb-3 fs-4">
-              by{" "}
-              <span className="text-primary ms-2">
+            <h4 className="card-title mt-4 fs-2">{collection.name}</h4>
+            <div className="author">
+              <small> by</small>
+              <span className="text-primary">
                 {collection.creator.slice(0, 5) +
                   "..." +
                   collection.creator.slice(38, 42)}
               </span>
-            </p>
-            <p className="card-text text-truncate px-5 my-3 description">
+            </div>
+            <p className="card-text text-truncate  mb-3 description">
               {collection.description}
             </p>
-            <p> {collection.itemCount}-item</p>
+            <p className="fs-4"> {collection.itemCount}-item</p>
           </div>
         </div>
       </div>

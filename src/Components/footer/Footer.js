@@ -103,7 +103,7 @@ export default function Footer() {
           </div> */}
         </div>
 
-        <Link href='/' className='copy-right'>
+        <Link to='/' className='copy-right'>
           {footerdata.copyRight}
         </Link>
       </div>

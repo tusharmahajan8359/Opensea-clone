@@ -61,7 +61,7 @@ export const MyCollection = () => {
             });
           });
       }
-    } catch (err) {}
+    } catch (err) { }
   };
 
   window.ethereum.on('accountsChanged', async () => {
@@ -83,16 +83,16 @@ export const MyCollection = () => {
           i
         </span>
       </p>
-      <Link to='/my collections/create' className='btn btn-primary btn-lg me-3'>
+      <Link to='/my-collections/create' className='btn btn-primary btn-lg me-3'>
         Create a Collection
       </Link>
       <button type='button' className='btn btn-outline-primary btn-lg p-3 px-5'>
         <BsThreeDotsVertical size={24} />
       </button>
 
-      <div className='row row-cols-md-3 gy-3 p-0 mt-5'>
+      <div className='row row-cols-md-3 gy-5  mt-5'>
         {collectionList.map((list, index) => {
-          console.log(collectionList);
+          // console.log(collectionList);
           return <MyCollectionCard key={index} collection={list} />;
         })}
       </div>
