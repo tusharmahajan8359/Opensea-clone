@@ -1,48 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useContext } from "react";
 import { ethers } from "ethers";
 import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
 import { FaOldRepublic } from "react-icons/fa";
-
+import { AppContext } from "../../App"
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
-const NFTOffer = ({ TOKENID, Contract, isDisabled }) => {
+const NFTOffer = (props, ref) => {
     const [offerList, setOfferList] = useState([]);
+    const { currentAccount } = useContext(AppContext);
     let contract;
+    let provider;
 
     useEffect(() => {
         getTableData()
     }, []);
 
+    useImperativeHandle(ref, () => ({
+        getTable() {
+            getTableData()
+        }
+    }), [])
+
     const getTableData = async () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         contract = new ethers.Contract(marketAddress, Market.abi, signer);
-        // setOfferList([])
-        const offers = await contract.getOfferIds(TOKENID);
+        const offers = await contract.getOfferIds(props.TOKENID);
         setOfferList([]);
         for (let i = 0; i < offers.length; i++) {
             const offer = {
                 user: await contract.offerIdToUser(offers[i]),
                 price: await contract.offerIdToPrice(offers[i]),
                 status: await contract.offerStatus(offers[i]),
-                offerId: offers[i],
+                // offerOwner: await contract.offerIdToUser(offers[i])
             };
-            //  console.log(offer)
+
             setOfferList((old) => [...old, offer]);
         }
     }
     const acceptOffer = async (index) => {
-        // tkn ,index,collection
-        // console.log()
-        await Contract.acceptOffer(TOKENID, index, collectionAddress);
+        await props.Contract.acceptOffer(props.TOKENID, index, collectionAddress);
+
     };
     const cancelOffer = async (index) => {
 
-        await Contract.cancelOffer(TOKENID, index, collectionAddress);
+        await props.Contract.cancelOffer(props.TOKENID, index, collectionAddress)
+
         // const x = await Contract.idToOffers(TOKENID, index)
         // console.log(await Contract.offerStatus(x))
+
     };
 
     return (
@@ -80,10 +88,12 @@ const NFTOffer = ({ TOKENID, Contract, isDisabled }) => {
                                     const price = ethers.utils.formatEther(
                                         "" + JSON.parse(data.price)
                                     );
+
                                     if (data.status) {
+                                        let i = 0
                                         return (
                                             <tr key={index}>
-                                                <th scope="row">{index + 1}</th>
+                                                <th scope="row">{++i}</th>
                                                 <td>{price}</td>
                                                 <td title={data.user}>
                                                     {data.user.slice(0, 4) +
@@ -91,9 +101,10 @@ const NFTOffer = ({ TOKENID, Contract, isDisabled }) => {
                                                         data.user.slice(39, 42)}
                                                 </td>
 
-                                                {
-                                                    isDisabled ?
-                                                        <td>
+                                                {props.ifOwner ?
+
+                                                    <td>
+                                                        {currentAccount == data.user.toLowerCase() &&
                                                             <button
                                                                 type="button"
                                                                 className="btn btn-primary"
@@ -101,17 +112,19 @@ const NFTOffer = ({ TOKENID, Contract, isDisabled }) => {
                                                             >
                                                                 Cancel Offer
                                                             </button>
-                                                        </td>
-                                                        :
-                                                        <td>
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-primary"
-                                                                onClick={() => acceptOffer(index)}
-                                                            >
-                                                                Accept Offer
-                                                            </button>
-                                                        </td>
+                                                        }
+
+                                                    </td>
+                                                    :
+                                                    <td>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-primary"
+                                                            onClick={() => acceptOffer(index)}
+                                                        >
+                                                            Accept Offer
+                                                        </button>
+                                                    </td>
                                                 }
                                             </tr>)
 
@@ -127,4 +140,4 @@ const NFTOffer = ({ TOKENID, Contract, isDisabled }) => {
     );
 };
 
-export default NFTOffer;
+export default forwardRef(NFTOffer);

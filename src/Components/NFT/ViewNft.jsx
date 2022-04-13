@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useHistory } from "react-router-dom";
 import "./ViewNFT.css";
 import {
   BsFillTagsFill,
@@ -25,6 +25,7 @@ const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 const ViewNft = () => {
   let location = useLocation();
   let { state } = location.state;
+  const history = useHistory();
   const [owner, setOwner] = useState("");
   const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
@@ -206,7 +207,8 @@ const ViewNft = () => {
       }
     );
     await tx.wait();
-    // ref.current.getTableData();
+
+    ref.current.getTable();
   };
   funct();
   getItemStatus();
@@ -403,10 +405,10 @@ const ViewNft = () => {
                 <NFTListing />
 
                 <NFTOffer
-                  // ref={ref}
+                  ref={ref}
                   TOKENID={TOKENID}
                   Contract={marketContract}
-                  isDisabled={isDisabled}
+                  ifOwner={isDisabled}
                 />
               </div>
             </div>

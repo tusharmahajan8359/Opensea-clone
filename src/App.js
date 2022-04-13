@@ -12,57 +12,75 @@ import { CreateNewItems } from './Components/CreateNewItems';
 import { CreateCollection } from './Components/Nav-Bar/profile/CreateCollection';
 import CollectionDetails from './Components/Nav-Bar/profile/CollectionDetails';
 import ViewNft from './Components/NFT/ViewNft';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, createContext } from 'react';
 
 //
 // import from './Components/NFT/ViewNft.jsx'
-
+export const AppContext = createContext(null);
 function App() {
   const [state, setState] = useState({ isConnected: false });
+  const [currentAccount, setCurrentAccount] = useState();
+
+  async function connectWallet() {
+    const [account] = await window.ethereum.request({
+      method: 'eth_requestAccounts',
+    });
+    setCurrentAccount(account);
+  }
+
+  useEffect(() => connectWallet());
+
+  window.ethereum.on('accountsChanged', function (accounts) {
+    connectWallet();
+  });
 
   return (
     <React.Fragment>
-      <Navbar stateData={state} setStateData={setState} />
+      <AppContext.Provider value={{ currentAccount }}>
 
-      <Switch>
-        <Route path='/' exact>
-          <Hero />
-          <Features />
-        </Route>
 
-        <Route path='/explore' exact>
-          <Explore />
-        </Route>
+        <Navbar stateData={state} setStateData={setState} />
 
-        <Route path='/help-center'>
-          <HelpDesk />
-        </Route>
+        <Switch>
+          <Route path='/' exact>
+            <Hero />
+            <Features />
+          </Route>
 
-        <Route path='/create'>
-          <CreateNewItems />
-        </Route>
+          <Route path='/explore' exact>
+            <Explore />
+          </Route>
 
-        <Route path='/my-collections' exact>
-          <MyCollection />
-        </Route>
+          <Route path='/help-center'>
+            <HelpDesk />
+          </Route>
 
-        <Route path='/my-collections/create' exact>
-          <CreateCollection />
-        </Route>
-        <Route path='/explore/nft' exact>
-          <ViewNft />
-        </Route>
+          <Route path='/create'>
+            <CreateNewItems />
+          </Route>
 
-        <Route path='/collection-details/:id' exact>
-          <CollectionDetails />
-        </Route>
-        <Route path='*'>
-          <Hero />
-          <Features />
-        </Route>
-      </Switch>
+          <Route path='/my-collections' exact>
+            <MyCollection />
+          </Route>
 
-      <Footer />
+          <Route path='/my-collections/create' exact>
+            <CreateCollection />
+          </Route>
+          <Route path='/explore/nft' exact>
+            <ViewNft />
+          </Route>
+
+          <Route path='/collection-details/:id' exact>
+            <CollectionDetails />
+          </Route>
+          <Route path='*'>
+            <Hero />
+            <Features />
+          </Route>
+        </Switch>
+
+        <Footer />
+      </AppContext.Provider>
     </React.Fragment>
   );
 }
