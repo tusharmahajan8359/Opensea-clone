@@ -402,7 +402,7 @@ const ViewNft = () => {
               )}
 
               <div className="accordion" id="accordionExample">
-                <NFTListing />
+                {/* <NFTListing /> */}
 
                 <NFTOffer
                   ref={ref}

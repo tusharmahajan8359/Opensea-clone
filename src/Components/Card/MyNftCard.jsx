@@ -11,12 +11,12 @@ const MyNftCard = ({ nftdata }) => {
   return (
     <>
       <div className='col' onClick={handleViewNft}>
-        <div className='card h-100'>
+        <div className='card h-100 pb-5' >
           <img
             src={nftdata.image}
-            className="card-img-top"
+            className="d-block mx-auto"
             alt='...'
-            style={{ height: '18rem' }}
+            style={{ height: '24rem', width: "100%" }}
           />
           <div className='body text-center'>
             <h4 className='card-title mt-5 mb-3'>{nftdata.name}</h4>
