@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import "./ViewNFT.css";
 import {
@@ -18,7 +18,7 @@ import NFTOffer from "./NFTOffer";
 import NFTListing from "./NFTListing";
 import NFTDescription from "./NFTDescription";
 import NFTOfferModal from "../modal/NFTOfferModal";
-
+import { AppContext } from "../../App";
 const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
 const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
@@ -26,8 +26,10 @@ const ViewNft = () => {
   let location = useLocation();
   let { state } = location.state;
   const history = useHistory();
+  const { currentAccount } = useContext(AppContext);
+  // console.log(currentAccount)
   const [owner, setOwner] = useState("");
-  const [currentAccount, setCurrentAccount] = useState();
+  // const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
   const [itemStatus, setItemStatus] = useState(false);
   // const [TOKENID, setTOKENID] = useState();
@@ -51,7 +53,9 @@ const ViewNft = () => {
   let contract;
   let marketContract;
   let account;
-  let COLLECTIONID = parseInt(state.collectionId._hex, 16);
+  let COLLECTIONID = state.collectionId._hex
+    ? parseInt(state.collectionId._hex, 16)
+    : parseInt(state.collectionId.hex, 16);
   let TOKENID = parseInt(state.id._hex, 16);
 
   useEffect(async () => {
@@ -62,7 +66,7 @@ const ViewNft = () => {
       tokenOwner = await contract.ownerOf(TOKENID);
       return account;
     };
-
+    console.log(await marketContract.offerIdToUser(1));
     const _tokenURI = await contract.tokenURI(TOKENID);
     const _account = await func();
     const _status = await marketContract.idToOnSale(TOKENID);
@@ -76,7 +80,7 @@ const ViewNft = () => {
       .then((data) => {
         setNftData({ ...nftData, description: data.description });
       });
-    setCurrentAccount(_account[0]);
+    // setCurrentAccount(_account[0]);
     setItemStatus(_status);
     setNftData({
       ...nftData,
@@ -87,8 +91,8 @@ const ViewNft = () => {
       currentPrice: price,
       onSale: itemSaleStatus,
     });
-
-    if (currentAccount === tokenOwner) {
+    // console.log(currentAccount, tokenOwner);
+    if (currentAccount === tokenOwner.toLowerCase()) {
       setOwner("You");
       setIsDisabled(false);
     } else {
@@ -97,11 +101,11 @@ const ViewNft = () => {
     }
   }, [owner, currentAccount, itemStatus]);
 
-  window.ethereum.on("accountsChanged", async function () {
-    // const provider = new ethers.providers.Web3Provider(window.ethereum);
-    account = await provider.listAccounts();
-    setCurrentAccount(account[0]);
-  });
+  // window.ethereum.on("accountsChanged", async function () {
+  //   // const provider = new ethers.providers.Web3Provider(window.ethereum);
+  //   account = await provider.listAccounts();
+  //   setCurrentAccount(account[0]);
+  // });
 
   const testFunc = async () => {
     const collection = await contract.collections(COLLECTIONID);
@@ -186,7 +190,7 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => { };
+  const getItemStatus = async () => {};
 
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -341,7 +345,7 @@ const ViewNft = () => {
               <div className="about-nft">
                 <p className="nft-name fs-2 mb-3">{nftData.nftName}</p>
                 <p className="owner text-muted fs-4">
-                  owned by
+                  owned by :-
                   <span className="text-primary cursor-pointer">{owner}</span>
                 </p>
               </div>

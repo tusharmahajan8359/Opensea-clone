@@ -169,4 +169,38 @@ contract CoreCollection is ICoreCollection, ERC721URIStorage {
         }
         return collectionIds;
     }
+
+    function getMyNFTs() external view returns(NFT[] memory) {
+
+     uint256 count;
+
+   for(uint i=1; i<=itemCounter; i++){
+
+   if(ownerOf(i) == msg.sender){
+
+    count++;
+
+    }
+
+   }
+
+     NFT[] memory myNFTs = new NFT[](count);
+
+     uint index;
+
+     for(uint i=1; i<=itemCounter; i++){
+
+     if(ownerOf(i) == msg.sender){
+
+     myNFTs[index] = (NFTs[i]);
+
+    index++;
+
+   }
+
+   }
+
+     return myNFTs;
+
+ }
 }
