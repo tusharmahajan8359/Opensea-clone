@@ -19,7 +19,7 @@ export const navBarData = {
     {
       id: 3,
       itemTitle: "Profile",
-      dropdownItems: ["My-Collections"],
+      dropdownItems: [],
     },
   ],
   // showDropdown:{this.showDropdownHadler},
