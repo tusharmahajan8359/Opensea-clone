@@ -1,17 +1,18 @@
 import React, { useEffect } from "react";
 import { FaAsterisk } from "react-icons/fa";
 import "./CreateCollection.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { useHistory, Link } from "react-router-dom";
 import { ethers } from "ethers";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
-
+import { AppContext } from "../../../App";
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 export const CreateCollection = () => {
+  const { collectionAddress } = useContext(AppContext);
   const [isDisabled, setIsDisabled] = useState(true);
   const [fileUrl, setFileUrl] = useState(null);
   const [description, setDescription] = useState("");
@@ -19,8 +20,8 @@ export const CreateCollection = () => {
   const history = useHistory();
 
   useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
+    window.scrollTo(0, 0);
+  }, []);
   async function onFileUpload(e) {
     const file = e.target.files[0];
     try {
@@ -62,6 +63,7 @@ export const CreateCollection = () => {
     });
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
+    console.log(collectionAddress);
     const contract = new ethers.Contract(
       collectionAddress,
       Collection.abi,
@@ -77,7 +79,7 @@ export const CreateCollection = () => {
           (event) => event.event === "CollectionCreated"
         );
         console.log("Collection ID: ", parseInt(event.args[1]._hex, 16));
-        history.push("/my-collections");
+        history.push("/profile");
       })
       .catch((err) => {
         console.log(err);

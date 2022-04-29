@@ -20,7 +20,8 @@ export const AppContext = createContext(null);
 function App() {
   const [state, setState] = useState({ isConnected: false });
   const [currentAccount, setCurrentAccount] = useState();
-
+  const marketAddress = "0x6BA9782Dd2E84D45ee2820638a94cA3f0e46E4C4";
+  const collectionAddress = "0xcbf8A9396336Ee4A3e676b97CD53D87f3F8109f2";
   async function connectWallet() {
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -36,7 +37,9 @@ function App() {
 
   return (
     <React.Fragment>
-      <AppContext.Provider value={{ currentAccount }}>
+      <AppContext.Provider
+        value={{ currentAccount, marketAddress, collectionAddress }}
+      >
         <Navbar stateData={state} setStateData={setState} />
 
         <Switch>

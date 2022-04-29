@@ -7,15 +7,16 @@ import { ethers } from "ethers";
 import Collection from "../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import { create as ipfsHttpClient } from "ipfs-http-client";
 import { AppContext } from "../App";
+// import { corecollectionAddress } from "../../scripts/deploy";
 const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 const SAMPLE_TOKEN_URI = "http://test.com";
 
 export const CreateNewItems = () => {
   const history = useHistory();
-  const { currentAccount } = useContext(AppContext);
+  const { currentAccount, collectionAddress } = useContext(AppContext);
   const [collections, setCollections] = useState([]);
   const [selectedCollection, setSelectedCollection] = useState(null);
   // const [currentAccount, setAccount] = useState();

@@ -1,14 +1,15 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { ethers, Signer } from "ethers";
 import MyNftCard from "../../Card/MyNftCard";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
-
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+import { AppContext } from "../../../App";
+// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 const CollectionDetails = () => {
+  const { collectionAddress } = useContext(AppContext);
   let location = useLocation();
   let { state } = location.state;
   const [nftList, setNftList] = useState([]);
@@ -19,7 +20,7 @@ const CollectionDetails = () => {
   };
 
   useEffect(async () => {
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0);
     await onPageLoad();
     getNFTs();
   }, []);

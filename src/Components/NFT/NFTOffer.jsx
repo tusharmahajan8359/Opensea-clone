@@ -10,12 +10,13 @@ import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollect
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
 import { FaOldRepublic } from "react-icons/fa";
 import { AppContext } from "../../App";
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-const marketAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
+// const marketAddress = "0x31d4Eb8f7Fb6Bdb23AD92A2eBA9859FB7d19c55b";
 
 const NFTOffer = (props, ref) => {
   const [offerList, setOfferList] = useState([]);
-  const { currentAccount } = useContext(AppContext);
+  const { currentAccount, marketAddress, collectionAddress } =
+    useContext(AppContext);
   const [tableVisibility, setTableVisibility] = useState(true);
   let contract;
   let provider;

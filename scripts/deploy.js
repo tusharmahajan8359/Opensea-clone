@@ -1,5 +1,5 @@
 const hre = require("hardhat");
-
+// let corecollectionAddress;
 async function main() {
   const NFT = await hre.ethers.getContractFactory("CoreCollection");
   const Market = await hre.ethers.getContractFactory("Market");
@@ -11,6 +11,7 @@ async function main() {
 
   console.log("Market deployed to:", market.address);
   console.log("CoreCollection deployed to:", nft.address);
+  // corecollectionAddress = nft.address;
 }
 
 main()
@@ -19,3 +20,4 @@ main()
     console.error(error);
     process.exit(1);
   });
+// export { corecollectionAddress };

@@ -7,10 +7,10 @@ import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreColl
 import MyCollectionCard from "../../Card/MyCollectionCard";
 import MyNftCard from "../../Card/MyNftCard";
 import { AppContext } from "../../../App";
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 export const MyCollection = () => {
-  const { currentAccount } = useContext(AppContext);
+  const { currentAccount, collectionAddress } = useContext(AppContext);
   // const [currentAccount, setCurrentAccount] = useState('');
   const [collectionList, setCollectionList] = useState([]);
   const [nftList, setNftList] = useState([]);

@@ -1,14 +1,15 @@
 import React from "react";
 import "./Explore.css";
 import ExploreCard from "../../Card/ExploreCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { ethers } from "ethers";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import { carddata } from "./DataExplore";
-
-const collectionAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+import { AppContext } from "../../../App";
+// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 export const Explore = () => {
+  const { collectionAddress } = useContext(AppContext);
   let provider;
   const [allcollections, setAllCollections] = useState([]);
   const onPageLoad = async () => {
@@ -18,7 +19,7 @@ export const Explore = () => {
   useEffect(async () => {
     await onPageLoad();
     fetchAllCollections();
-    window.scrollTo(0,0)
+    window.scrollTo(0, 0);
   }, []);
 
   const fetchAllCollections = async () => {
