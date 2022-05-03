@@ -25,10 +25,11 @@ import { AppContext } from "../../App";
 const ViewNft = () => {
   let location = useLocation();
   let { state } = location.state;
+  // console.log(state);
   const history = useHistory();
   const { currentAccount, marketAddress, collectionAddress } =
     useContext(AppContext);
-  // console.log(currentAccount)
+
   const [owner, setOwner] = useState("");
   // const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
@@ -54,10 +55,11 @@ const ViewNft = () => {
   let contract;
   let marketContract;
   let account;
-  let COLLECTIONID = state.collectionId._hex
-    ? parseInt(state.collectionId._hex, 16)
-    : parseInt(state.collectionId.hex, 16);
-  let TOKENID = parseInt(state.id._hex, 16);
+  let COLLECTIONID = state.collectionId;
+  // ? parseInt(state.collectionId._hex, 16)
+  // : parseInt(state.collectionId.hex, 16);
+  let TOKENID = state.id;
+  // console.log(state);
 
   useEffect(async () => {
     window.scrollTo(0, 0);
@@ -65,17 +67,27 @@ const ViewNft = () => {
       account = await provider.listAccounts();
 
       tokenOwner = await contract.ownerOf(TOKENID);
+
       return account;
     };
-    console.log(await marketContract.offerIdToUser(1));
+
+    // console.log(await marketContract.offerIdToUser(1));
+    // console.log("hello");
     const _tokenURI = await contract.tokenURI(TOKENID);
+    // console.log("done");
     const _account = await func();
+    // console.log("done");
     const _status = await marketContract.idToOnSale(TOKENID);
+
     const _currentPrice = await marketContract.idToPrice(TOKENID);
+
     const price = ethers.utils.formatEther(_currentPrice).toString();
+    // console.log("hello", COLLECTIONID);
     const _collectionName = await contract.collections(COLLECTIONID);
+    // console.log("hello");
     const _nftData = await contract.NFTs(TOKENID);
     const itemSaleStatus = await marketContract.idToOnSale(TOKENID);
+
     fetch(_tokenURI)
       .then((res) => res.json())
       .then((data) => {
@@ -277,8 +289,9 @@ const ViewNft = () => {
                 <FaEthereum size={28} />
               </div>
               <div className="nft-container d-flex justify-content-center align-items-center">
+                {/* {console.log(nftData.image)} */}
                 <img
-                  src={nftData.image}
+                  src={state.image}
                   alt=""
                   style={{ height: "100%", width: "auto" }}
                 />
@@ -286,7 +299,7 @@ const ViewNft = () => {
             </div>
 
             <NFTDescription
-              nftData={nftData}
+              nftData={state}
               TOKENID={TOKENID}
               collectionAddress={collectionAddress}
             />

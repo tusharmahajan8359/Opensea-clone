@@ -21,8 +21,8 @@ const NFTOffer = (props, ref) => {
   let contract;
   let provider;
   let rowCounter = 0;
-  useEffect(() => {
-    getTableData();
+  useEffect(async () => {
+    await getTableData();
   }, []);
 
   useImperativeHandle(

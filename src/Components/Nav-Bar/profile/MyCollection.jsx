@@ -7,6 +7,7 @@ import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreColl
 import MyCollectionCard from "../../Card/MyCollectionCard";
 import MyNftCard from "../../Card/MyNftCard";
 import { AppContext } from "../../../App";
+import { useQuery, gql } from "@apollo/client";
 // const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 export const MyCollection = () => {
@@ -16,8 +17,23 @@ export const MyCollection = () => {
   const [nftList, setNftList] = useState([]);
   const [isNftPageVisible, setNftPageVisible] = useState(false);
   let provider;
-  let account;
-
+  let account = "" + currentAccount;
+  console.log(currentAccount);
+  const GET_myCollections = gql`
+    query {
+      collections(
+        where: { creator: "0x38C32d2c37FE6Fb5361bC3b01e9ABB4Bf4e00E4e" }
+      ) {
+        id
+        name
+        collectionId
+        creator
+        collectionLink
+      }
+    }
+  `;
+  const { data } = useQuery(GET_myCollections);
+  console.log(data);
   const onPageLoad = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
     // account = await provider.listAccounts();

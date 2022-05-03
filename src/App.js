@@ -14,14 +14,20 @@ import CollectionDetails from "./Components/Nav-Bar/profile/CollectionDetails";
 import ViewNft from "./Components/NFT/ViewNft";
 import { useEffect, useState, createContext } from "react";
 
+import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: "https://api.studio.thegraph.com/query/25712/opensea-collection/0.2.4",
+  cache: new InMemoryCache(),
+});
 //
 // import from './Components/NFT/ViewNft.jsx'
 export const AppContext = createContext(null);
 function App() {
   const [state, setState] = useState({ isConnected: false });
   const [currentAccount, setCurrentAccount] = useState();
-  const marketAddress = "0x6BA9782Dd2E84D45ee2820638a94cA3f0e46E4C4";
-  const collectionAddress = "0xcbf8A9396336Ee4A3e676b97CD53D87f3F8109f2";
+  const marketAddress = "0x364Fcde2600Fe7DE53EE2c0b12677E385E5ac6dF";
+  const collectionAddress = "0xC0be2c7e674796208E38F1e50DD193B596df5b96";
   async function connectWallet() {
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -36,7 +42,7 @@ function App() {
   });
 
   return (
-    <React.Fragment>
+    <ApolloProvider client={client}>
       <AppContext.Provider
         value={{ currentAccount, marketAddress, collectionAddress }}
       >
@@ -82,7 +88,7 @@ function App() {
 
         <Footer />
       </AppContext.Provider>
-    </React.Fragment>
+    </ApolloProvider>
   );
 }
 

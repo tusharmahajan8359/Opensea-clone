@@ -6,12 +6,42 @@ import { ethers, Signer } from "ethers";
 import MyNftCard from "../../Card/MyNftCard";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import { AppContext } from "../../../App";
+import { gql, useQuery } from "@apollo/client";
 // const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 const CollectionDetails = () => {
-  const { collectionAddress } = useContext(AppContext);
   let location = useLocation();
   let { state } = location.state;
+  console.log(state.id);
+  let collectionId = state.id;
+  const Get_My_Nfts = gql`
+    query {
+      nfts (where:{collectionId:${collectionId}}){
+        id
+        itemId
+        nftName
+        collectionId
+        creator
+        nftLink
+      }
+    }
+  `;
+  let { data } = useQuery(Get_My_Nfts);
+  console.log(data);
+  // const Get_Nft_Uri = gql`
+  //   query {
+  //     tokens(where: { itemId: 1 }) {
+  //       id
+  //       itemId
+  //       tokenURI
+  //     }
+  //   }
+  // `;
+  // const nftUri = useQuery(Get_Nft_Uri);
+  // console.log(nftUri.data);
+  // console.log(tdata);
+  const { collectionAddress } = useContext(AppContext);
+
   const [nftList, setNftList] = useState([]);
   let provider;
 
@@ -21,31 +51,34 @@ const CollectionDetails = () => {
 
   useEffect(async () => {
     window.scrollTo(0, 0);
-    await onPageLoad();
-    getNFTs();
-  }, []);
+    // await onPageLoad();
+    if (data) {
+      getNFTs();
+    }
+  }, [data]);
 
   const getNFTs = async () => {
-    const contract = new ethers.Contract(
-      collectionAddress,
-      Collection.abi,
-      provider
-    );
+    // const contract = new ethers.Contract(
+    //   collectionAddress,
+    //   Collection.abi,
+    //   provider
+    // );
 
     try {
-      const items = await contract.getItems(state.id);
+      // const items = await contract.getItems(state.id);
       setNftList([]);
-      for (let i = 0; i < items.length; i++) {
-        const item = await contract.NFTs(items[i]);
+      for (let i = 0; i < data.nfts.length; i++) {
+        // const item = await contract.NFTs(items[i]);
 
-        const ipfsLink = await contract.tokenURI(item[0]);
-
+        const ipfsLink = data.nfts[i].nftLink;
+        // console.log(data.nfts[i]);
         const obj = {
           collectionId: state.id,
-          id: item[0],
-          name: item[1],
-          creator: item[2],
+          id: data.nfts[i].itemId,
+          name: data.nfts[i].nftName,
+          creator: data.nfts[i].creator,
         };
+        // console.log("hello", data.nfts[i].itemId);
         fetch(ipfsLink)
           .then((res) => res.json())
           .then((data) => {
@@ -78,6 +111,7 @@ const CollectionDetails = () => {
 
       <div className="row row-cols-md-3 gy-3 p-0 m-5">
         {nftList.map((data, index) => {
+          console.log(data);
           return <MyNftCard key={index} nftdata={data} />;
         })}
       </div>

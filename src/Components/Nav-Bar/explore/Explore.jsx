@@ -6,41 +6,57 @@ import { ethers } from "ethers";
 import Collection from "../../../artifacts/contracts/CoreCollection.sol/CoreCollection.json";
 import { carddata } from "./DataExplore";
 import { AppContext } from "../../../App";
-// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
+import { useQuery, gql } from "@apollo/client";
+import { GET_All_Collections } from "../../../Graphql/collectionQuerys";
 
 export const Explore = () => {
+  const GET_Collections = gql`
+    query {
+      collections {
+        id
+        name
+        collectionId
+        creator
+        collectionLink
+      }
+    }
+  `;
+  const { data } = useQuery(GET_Collections);
+  // console.log(data.collections[0].creator);
   const { collectionAddress } = useContext(AppContext);
   let provider;
   const [allcollections, setAllCollections] = useState([]);
-  const onPageLoad = async () => {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-  };
+  // const onPageLoad = async () => {
+  //   provider = new ethers.providers.Web3Provider(window.ethereum);
+  // };
 
   useEffect(async () => {
-    await onPageLoad();
-    fetchAllCollections();
+    // await onPageLoad();
+    if (data) {
+      fetchAllCollections();
+    }
     window.scrollTo(0, 0);
-  }, []);
+  }, [data]);
 
   const fetchAllCollections = async () => {
-    const contract = new ethers.Contract(
-      collectionAddress,
-      Collection.abi,
-      provider
-    );
+    //   const contract = new ethers.Contract(
+    //     collectionAddress,
+    //     Collection.abi,
+    //     provider
+    //   );
 
     try {
-      const collections = await contract.getAllCollections();
+      // const collections = await contract.getAllCollections();
 
       setAllCollections([]);
-      for (let i = 0; i < collections.length; i++) {
-        const collection = await contract.collections(collections[i]);
+      for (let i = 0; i < data.collections.length; i++) {
+        // const collection = await contract.collections(collections[i]);
         // console.log(collection[3])
-        const ipfsLink = collection[3];
+        const ipfsLink = data.collections[i].collectionLink;
         const obj = {
-          id: collection[0],
-          name: collection[1],
-          creator: collection[2],
+          id: data.collections[i].collectionId,
+          name: data.collections[i].name,
+          creator: data.collections[i].creator,
         };
         fetch(ipfsLink)
           .then((res) => res.json())
