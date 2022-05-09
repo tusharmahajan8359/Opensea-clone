@@ -46,13 +46,13 @@ contract Market is IMarket {
      * @param _tokenId {uint256} Token ID of the NFT which is being Listed
      * @param _price {uint256} The price at which the NFT is being Listed
      */
-    event ItemListed(uint256 _tokenId, uint256 _price);
+    event ItemListed(uint256 _tokenId, uint256 _price,bool _status);
 
     /**
      * @dev Event emitted when NFT with '_tokenId' is removed from Listing by the owner
      * @param _tokenId {uint256} Token ID of the NFT which is canceled from Listing
      */
-    event CancelListing(uint256 _tokenId);
+    event CancelListing(uint256 _tokenId,bool _status);
 
     /**
      * @dev Event emitted when a '_buyer' buys NFT with token ID '_tokenId'
@@ -73,7 +73,7 @@ contract Market is IMarket {
      * @param _tokenId {uint256} Token ID to which the offer is being made
      * @param _offerPrice {uint256} The amount being offered to the NFT
      */
-    event OfferSent(uint256 _tokenId, uint256 _offerPrice);
+    event OfferSent(uint256 _offerId,uint256 _tokenId, uint256 _offerPrice,address _offerSender);
 
     /**
      * @dev Event emitted when owner accepts offer of '_offerPrice' on NFT with ID '_tokenId'
@@ -124,7 +124,7 @@ contract Market is IMarket {
         idToOnSale[_tokenId] = true;
         idToPrice[_tokenId] = _price;
 
-        emit ItemListed(_tokenId, idToPrice[_tokenId]);
+        emit ItemListed(_tokenId, _price,true);
     }
 
     /**
@@ -147,7 +147,8 @@ contract Market is IMarket {
         idToOnSale[_tokenId] = false;
         idToPrice[_tokenId] = 0;
 
-        emit CancelListing(_tokenId);
+        // emit CancelListing(_tokenId,false);
+        emit ItemListed(_tokenId,0,false);
     }
 
     /**
@@ -205,7 +206,7 @@ contract Market is IMarket {
         offerIdToUser[offerCount] = msg.sender;
         offerStatus[offerCount] = true;
 
-        emit OfferSent(_tokenId, _offerPrice);
+        emit OfferSent(offerCount,_tokenId, _offerPrice,msg.sender);
     }
 
     /**

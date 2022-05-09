@@ -17,17 +17,21 @@ import { useEffect, useState, createContext } from "react";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://api.studio.thegraph.com/query/25712/opensea-collection/0.2.4",
+  uri: "https://api.studio.thegraph.com/query/25712/opensea-collection/0.2.5",
   cache: new InMemoryCache(),
 });
-//
+const marketClient = new ApolloClient({
+  uri: "https://api.studio.thegraph.com/query/25712/opensea-marketplace/0.1.6",
+  cache: new InMemoryCache(),
+});
+
 // import from './Components/NFT/ViewNft.jsx'
 export const AppContext = createContext(null);
 function App() {
   const [state, setState] = useState({ isConnected: false });
   const [currentAccount, setCurrentAccount] = useState();
-  const marketAddress = "0x364Fcde2600Fe7DE53EE2c0b12677E385E5ac6dF";
-  const collectionAddress = "0xC0be2c7e674796208E38F1e50DD193B596df5b96";
+  const marketAddress = "0x4D17d434e12035988E7B78e457Be62549085E767";
+  const collectionAddress = "0xe9eb35c2D076BCf3696CbF1408f6Db73f31CFcb3";
   async function connectWallet() {
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",
@@ -42,7 +46,7 @@ function App() {
   });
 
   return (
-    <ApolloProvider client={client}>
+    <React.Fragment>
       <AppContext.Provider
         value={{ currentAccount, marketAddress, collectionAddress }}
       >
@@ -55,7 +59,9 @@ function App() {
           </Route>
 
           <Route path="/explore" exact>
-            <Explore />
+            <ApolloProvider client={client}>
+              <Explore />
+            </ApolloProvider>
           </Route>
 
           <Route path="/help-center">
@@ -67,18 +73,24 @@ function App() {
           </Route>
 
           <Route path="/profile" exact>
-            <MyCollection />
+            <ApolloProvider client={client}>
+              <MyCollection />
+            </ApolloProvider>
           </Route>
 
           <Route path="/my-collections/create" exact>
             <CreateCollection />
           </Route>
           <Route path="/explore/nft" exact>
-            <ViewNft />
+            <ApolloProvider client={marketClient}>
+              <ViewNft />
+            </ApolloProvider>
           </Route>
 
           <Route path="/collection-details/:id" exact>
-            <CollectionDetails />
+            <ApolloProvider client={client}>
+              <CollectionDetails />
+            </ApolloProvider>
           </Route>
           <Route path="*">
             <Hero />
@@ -88,7 +100,7 @@ function App() {
 
         <Footer />
       </AppContext.Provider>
-    </ApolloProvider>
+    </React.Fragment>
   );
 }
 
