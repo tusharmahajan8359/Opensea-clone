@@ -629,8 +629,8 @@
       ]
     },
     "/home/tusharmahajan/Tushar-Opensea/NFTMarketplace/contracts/Market.sol": {
-      "lastModificationDate": 1651921404404,
-      "contentHash": "9bb00872c33b58f0517c95123ef8a4ab",
+      "lastModificationDate": 1652421541146,
+      "contentHash": "25dabcfc90010b27e0ad86b2853bd9a9",
       "sourceName": "contracts/Market.sol",
       "solcConfig": {
         "version": "0.8.4",

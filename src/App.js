@@ -17,11 +17,11 @@ import { useEffect, useState, createContext } from "react";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://api.studio.thegraph.com/query/25712/opensea-collection/0.2.5",
+  uri: "https://api.studio.thegraph.com/query/25712/opensea-collection/0.3.11",
   cache: new InMemoryCache(),
 });
 const marketClient = new ApolloClient({
-  uri: "https://api.studio.thegraph.com/query/25712/opensea-marketplace/0.1.6",
+  uri: "https://api.studio.thegraph.com/query/25712/opensea-marketplace/0.2.12",
   cache: new InMemoryCache(),
 });
 
@@ -30,8 +30,8 @@ export const AppContext = createContext(null);
 function App() {
   const [state, setState] = useState({ isConnected: false });
   const [currentAccount, setCurrentAccount] = useState();
-  const marketAddress = "0x4D17d434e12035988E7B78e457Be62549085E767";
-  const collectionAddress = "0xe9eb35c2D076BCf3696CbF1408f6Db73f31CFcb3";
+  const marketAddress = "0xFbAe98bb4b002103acD9D0cCd90fCfdEfE1f219d";
+  const collectionAddress = "0xff4A54cb96A154a9E15c02d28df3477d14DAb375";
   async function connectWallet() {
     const [account] = await window.ethereum.request({
       method: "eth_requestAccounts",

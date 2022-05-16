@@ -9,7 +9,7 @@ contract Market is IMarket {
     uint256 private offerCount;
 
     //Listing Fees for the Market
-    uint256 public listingFee = 0.25 ether;
+    uint256 public listingFee = 0.00025 ether;
 
     //Mapping from itemId to its status
     mapping(uint256 => bool) public idToOnSale;
@@ -73,7 +73,7 @@ contract Market is IMarket {
      * @param _tokenId {uint256} Token ID to which the offer is being made
      * @param _offerPrice {uint256} The amount being offered to the NFT
      */
-    event OfferSent(uint256 _offerId,uint256 _tokenId, uint256 _offerPrice,address _offerSender);
+    event OfferSent(uint256 _offerId,uint256 _tokenId, uint256 _offerPrice,address _offerSender,bool _status);
 
     /**
      * @dev Event emitted when owner accepts offer of '_offerPrice' on NFT with ID '_tokenId'
@@ -87,7 +87,7 @@ contract Market is IMarket {
      * @param _tokenId {uint256} Token ID of the NFT whose offer got canceled by a user
      * @param _offerId {uint256} Offer ID of the offer which got canceled.
      */
-    event OfferCanceled(uint256 _tokenId, uint256 _offerId);
+    event OfferCanceled(uint256 _tokenId, uint256 _offerId,bool _status);
 
     /**
      * @dev Function to send NFT to someone else
@@ -147,8 +147,8 @@ contract Market is IMarket {
         idToOnSale[_tokenId] = false;
         idToPrice[_tokenId] = 0;
 
-        // emit CancelListing(_tokenId,false);
-        emit ItemListed(_tokenId,0,false);
+        emit CancelListing(_tokenId,false);
+        // emit ItemListed(_tokenId,0,false);
     }
 
     /**
@@ -206,7 +206,7 @@ contract Market is IMarket {
         offerIdToUser[offerCount] = msg.sender;
         offerStatus[offerCount] = true;
 
-        emit OfferSent(offerCount,_tokenId, _offerPrice,msg.sender);
+        emit OfferSent(offerCount,_tokenId, _offerPrice,msg.sender,true);
     }
 
     /**
@@ -225,7 +225,7 @@ contract Market is IMarket {
             "Only owner can accept the offer"
         );
 
-        uint256 _offerId = idToOffers[_tokenId][_offerIndex];
+        uint256 _offerId =_offerIndex ;  //idToOffers[_tokenId][_offerIndex]
 
         address _buyer = offerIdToUser[_offerId];
 
@@ -253,19 +253,19 @@ contract Market is IMarket {
 
         sendNFT(_tokenId, _buyer, _coreCollection);
 
-        emit OfferAccepted(_tokenId, offerIdToPrice[_offerId]);
+        emit OfferAccepted(_tokenId,_offerIndex);
     }
 
     /**
      * @dev This function cancels an offer provided to some NFT by the user.
      * @param _tokenId {uint256} Token ID of the NFT
-     * @param _offerIndex {uint256} Index of offers array returned from the mapping
+     * @param _offerId {uint256} Index of offers array returned from the mapping
      * @param _coreCollection {address} Address of the CoreCollection Contract
      */
 
     function cancelOffer(
         uint256 _tokenId,
-        uint256 _offerIndex,
+        uint256 _offerId,
         address _coreCollection
     ) external override {
         require(
@@ -273,7 +273,7 @@ contract Market is IMarket {
             "Owner cannot cancel listing of someone's offer"
         );
 
-        uint256 _offerId = idToOffers[_tokenId][_offerIndex];
+        // uint256 _offerId = idToOffers[_tokenId][_offerIndex];
 
         require(
             msg.sender == offerIdToUser[_offerId],
@@ -284,7 +284,7 @@ contract Market is IMarket {
 
         payable(msg.sender).transfer(offerIdToPrice[_offerId]);
 
-        emit OfferCanceled(_tokenId, _offerId);
+        emit OfferCanceled(_tokenId, _offerId,false);
     }
 
     /**

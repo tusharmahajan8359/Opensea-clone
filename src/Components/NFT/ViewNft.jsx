@@ -14,28 +14,34 @@ import Market from "../../artifacts/contracts/Market.sol/Market.json";
 import SellModal from "../modal/SellModal";
 import LowerPriceModal from "../modal/LowerPriceModal";
 import SendNftModal from "../modal/SendNftModal";
-import NFTOffer from "./NFTOffer";
+import Offers from "./Offers";
 import NFTListing from "./NFTListing";
 import NFTDescription from "./NFTDescription";
 import NFTOfferModal from "../modal/NFTOfferModal";
 import { AppContext } from "../../App";
-// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
-// const marketAddress = "0x31d4Eb8f7Fb6Bdb23AD92A2eBA9859FB7d19c55b";
+import { gql, useQuery, useLazyQuery } from "@apollo/client";
 
 const ViewNft = () => {
-  let location = useLocation();
-  let { state } = location.state;
-  // console.log(state);
-  const history = useHistory();
   const { currentAccount, marketAddress, collectionAddress } =
     useContext(AppContext);
 
+  let location = useLocation();
+  let { state } = location.state;
+
   const [owner, setOwner] = useState("");
-  // const [currentAccount, setCurrentAccount] = useState();
   const [isDisabled, setIsDisabled] = useState(true);
   const [itemStatus, setItemStatus] = useState(false);
-  // const [TOKENID, setTOKENID] = useState();
-  // const [COLLECTIONID, setCOLLECTIONID] = useState();
+  const [sellModal, setSellModal] = useState(false);
+  const [lowerpriceModal, setLowerPriceModal] = useState(false);
+  const [sendnftmodal, setSendNftModal] = useState(false);
+  const [offerModal, setOfferModal] = useState(false);
+  let tokenOwner;
+  let provider;
+  let contract;
+  let marketContract;
+  let COLLECTIONID = state.collectionId;
+  let TOKENID = state.id;
+
   const [nftData, setNftData] = useState({
     collectionName: "",
     nftName: "",
@@ -44,47 +50,21 @@ const ViewNft = () => {
     onSale: false,
   });
 
-  const [sellModal, setSellModal] = useState(false);
-  const [lowerpriceModal, setLowerPriceModal] = useState(false);
-  const [sendnftmodal, setSendNftModal] = useState(false);
-  const [offerModal, setOfferModal] = useState(false);
-  const [offerstate, setOfferState] = useState(true);
-  const ref = useRef();
-  let tokenOwner;
-  let provider;
-  let contract;
-  let marketContract;
-  let account;
-  let COLLECTIONID = state.collectionId;
-  // ? parseInt(state.collectionId._hex, 16)
-  // : parseInt(state.collectionId.hex, 16);
-  let TOKENID = state.id;
-  // console.log(state);
-
   useEffect(async () => {
     window.scrollTo(0, 0);
-    const func = async () => {
-      account = await provider.listAccounts();
+    getAllData();
+  }, [owner, currentAccount, itemStatus]);
 
-      tokenOwner = await contract.ownerOf(TOKENID);
-
-      return account;
-    };
-
-    // console.log(await marketContract.offerIdToUser(1));
-    // console.log("hello");
+  const getAllData = async () => {
     const _tokenURI = await contract.tokenURI(TOKENID);
-    // console.log("done");
-    const _account = await func();
-    // console.log("done");
-    const _status = await marketContract.idToOnSale(TOKENID);
+    tokenOwner = await contract.ownerOf(TOKENID);
 
     const _currentPrice = await marketContract.idToPrice(TOKENID);
 
     const price = ethers.utils.formatEther(_currentPrice).toString();
-    // console.log("hello", COLLECTIONID);
+
     const _collectionName = await contract.collections(COLLECTIONID);
-    // console.log("hello");
+
     const _nftData = await contract.NFTs(TOKENID);
     const itemSaleStatus = await marketContract.idToOnSale(TOKENID);
 
@@ -93,8 +73,7 @@ const ViewNft = () => {
       .then((data) => {
         setNftData({ ...nftData, description: data.description });
       });
-    // setCurrentAccount(_account[0]);
-    setItemStatus(_status);
+
     setNftData({
       ...nftData,
       collectionName: _collectionName[1],
@@ -104,7 +83,7 @@ const ViewNft = () => {
       currentPrice: price,
       onSale: itemSaleStatus,
     });
-    // console.log(currentAccount, tokenOwner);
+
     if (currentAccount === tokenOwner.toLowerCase()) {
       setOwner("You");
       setIsDisabled(false);
@@ -112,19 +91,11 @@ const ViewNft = () => {
       setOwner(tokenOwner);
       setIsDisabled(true);
     }
-  }, [owner, currentAccount, itemStatus]);
-
-  // window.ethereum.on("accountsChanged", async function () {
-  //   // const provider = new ethers.providers.Web3Provider(window.ethereum);
-  //   account = await provider.listAccounts();
-  //   setCurrentAccount(account[0]);
-  // });
+  };
 
   const testFunc = async () => {
     const collection = await contract.collections(COLLECTIONID);
-    console.log(collection[1]);
     const nft = await contract.NFTs(TOKENID);
-    console.log(nft[1]);
   };
   /**
    *
@@ -134,14 +105,12 @@ const ViewNft = () => {
   const sendNFT = async (_recepient) => {
     setSendNftModal(false);
     tokenOwner = await contract.ownerOf(TOKENID);
-
     const transaction = await contract.transferFrom(
       tokenOwner,
       _recepient,
       TOKENID
     );
     await transaction.wait();
-    console.log("transfer complete");
     setOwner(_recepient);
   };
   const listForSale = async (sellprice) => {
@@ -159,7 +128,7 @@ const ViewNft = () => {
       TOKENID,
       ethers.utils.parseEther(sellprice),
       collectionAddress,
-      { value: ethers.utils.parseEther("0.25") }
+      { value: ethers.utils.parseEther("0.00025") }
     );
     await tx.wait();
     setNftData({
@@ -168,6 +137,7 @@ const ViewNft = () => {
       onSale: true,
     });
     setItemStatus(true);
+    getReload();
   };
 
   const cancelListing = async () => {
@@ -175,19 +145,18 @@ const ViewNft = () => {
     await tx.wait();
     setNftData({ ...nftData, onSale: false });
     setItemStatus(false);
-    console.log("Status: ", itemStatus);
   };
 
   const lowerPrice = async (_newPrice) => {
     setLowerPriceModal(false);
-    console.log("Price Before: ", await marketContract.idToPrice(TOKENID));
+
     const transaction = await marketContract.lowerPrice(
       TOKENID,
       ethers.utils.parseEther(_newPrice),
       collectionAddress
     );
     await transaction.wait();
-    console.log("Price after: ", await marketContract.idToPrice(TOKENID));
+
     setNftData({ ...nftData, currentPrice: _newPrice.toString() });
   };
 
@@ -200,8 +169,6 @@ const ViewNft = () => {
     setNftData({ ...nftData, onSale: false });
   };
 
-  const getItemStatus = async () => {};
-
   const funct = async () => {
     provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
@@ -211,7 +178,7 @@ const ViewNft = () => {
 
   const handleMakeOffer = async (offerprice) => {
     setOfferModal(false);
-    console.log(TOKENID, offerprice);
+
     const tx = await marketContract.makeOffer(
       TOKENID,
       ethers.utils.parseEther(offerprice.toString()),
@@ -220,12 +187,68 @@ const ViewNft = () => {
         value: ethers.utils.parseEther(offerprice.toString()),
       }
     );
-    await tx.wait();
-
-    ref.current.getTable();
+    await tx.wait(1);
+    getReload();
   };
+
+  const acceptOffer = async (index) => {
+    const txt = await marketContract.acceptOffer(
+      TOKENID,
+      index,
+      collectionAddress
+    );
+    await txt.wait();
+    getReload();
+  };
+  const cancelOffer = async (index) => {
+    const txt = await marketContract.cancelOffer(
+      TOKENID,
+      index,
+      collectionAddress
+    );
+    await txt.wait();
+    getReload();
+  };
+
+  //offer data fetching function
+  const myTokenId = '"' + TOKENID + '"';
+  const GET_Offers = gql`
+    query {
+      offers(where: { tokenId: ${myTokenId} }) {
+        id
+        offerId
+        tokenId
+        offerPrice
+        offerSender
+        status
+      }
+    }
+  `;
+
+  //Listing query function
+  const Get_ListData = gql`query{
+    itemLists(first: 1 where:{tokenId:${myTokenId}}) {
+      id
+      tokenId
+      price
+      status
+    }
+  }`;
+  // console.log("before");
+  const offersData = useQuery(GET_Offers);
+  const listData = useQuery(Get_ListData, {
+    onCompleted: (data) => {
+      console.log("onCompleted", data.itemLists[0].status);
+      if (data.itemLists) {
+        setItemStatus(data.itemLists[0].status);
+      }
+    },
+  });
+
   funct();
-  getItemStatus();
+  const getReload = () => {
+    window.location.reload(false);
+  };
   return (
     <main className="section-view-nft">
       <div className="nav-item position-sticky">
@@ -418,13 +441,17 @@ const ViewNft = () => {
 
               <div className="accordion" id="accordionExample">
                 <NFTListing TOKENID={TOKENID} />
+                {/* {offersData.loading && console.log("loded data")} */}
 
-                <NFTOffer
-                  ref={ref}
-                  TOKENID={TOKENID}
-                  Contract={marketContract}
-                  ifOwner={isDisabled}
-                />
+                {offersData.data && (
+                  <Offers
+                    ifOwner={isDisabled}
+                    currentAccount={currentAccount}
+                    data={offersData.data}
+                    acceptOffer={acceptOffer}
+                    cancelOffer={cancelOffer}
+                  />
+                )}
               </div>
             </div>
           </div>

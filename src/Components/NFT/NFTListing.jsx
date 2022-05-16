@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { ethers } from "ethers";
 import { gql, useQuery } from "@apollo/client";
 const NFTListing = ({ TOKENID }) => {
   const [list, setList] = useState([]);
+  const myTokenId = '"' + TOKENID + '"';
   const getListing = gql`
     query {
-      itemLists(where: { tokenId: ${TOKENID}, status: true }) {
-        id
-        tokenId
-        price
-        status
-      }
+      listings(where:{tokenId:${myTokenId}}){
+          id
+          tokenId
+          price
+          time
+  }
     }
   `;
 
@@ -18,8 +20,8 @@ const NFTListing = ({ TOKENID }) => {
 
   useEffect(() => {
     if (data) {
-      console.log(data.itemLists);
-      setList(data.itemLists);
+      setList(data.listings);
+      console.log(data.listings);
     }
   }, [data]);
 
@@ -50,23 +52,40 @@ const NFTListing = ({ TOKENID }) => {
                 <tr>
                   <th scope="col">No.</th>
                   <th scope="col">Price</th>
-                  <th scope="col">Handle</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Time</th>
                 </tr>
               </thead>
               <tbody>
-                {console.log(list)}
                 {list.map((listdata, index) => {
+                  const price = ethers.utils.formatEther(
+                    "" + JSON.parse(listdata.price)
+                  );
+
+                  const date = new Date(listdata.time * 1000);
+                  let listdate =
+                    date.getDate() +
+                    "/" +
+                    (date.getMonth() + 1) +
+                    "/" +
+                    date.getFullYear();
+                  let listtime =
+                    date.getHours() +
+                    ":" +
+                    date.getMinutes() +
+                    ":" +
+                    date.getSeconds();
+
                   return (
-                    <tr>
+                    <tr key={index}>
                       <th scope="row">{index + 1}</th>
-                      <td>{listdata.price}</td>
-                      {/* <td>Otto</td>
-                      <td>@mdo</td> */}
-                      <td>
-                        {/* <button type="button" className="btn btn-primary">
-                          Cancel
-                        </button> */}
-                      </td>
+
+                      <td>{price}</td>
+
+                      <td>{listdate}</td>
+
+                      <td>{listtime}</td>
+                      <td></td>
                     </tr>
                   );
                 })}

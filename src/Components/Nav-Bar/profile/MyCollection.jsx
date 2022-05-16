@@ -8,67 +8,40 @@ import MyCollectionCard from "../../Card/MyCollectionCard";
 import MyNftCard from "../../Card/MyNftCard";
 import { AppContext } from "../../../App";
 import { useQuery, gql } from "@apollo/client";
-// const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 
 export const MyCollection = () => {
   const { currentAccount, collectionAddress } = useContext(AppContext);
-  // const [currentAccount, setCurrentAccount] = useState('');
+
   const [collectionList, setCollectionList] = useState([]);
   const [nftList, setNftList] = useState([]);
   const [isNftPageVisible, setNftPageVisible] = useState(false);
   let provider;
-  let account = "" + currentAccount;
-  console.log(currentAccount);
+  let account = '"' + currentAccount + '"';
+
   const GET_myCollections = gql`
     query {
-      collections(
-        where: { creator: "0x38C32d2c37FE6Fb5361bC3b01e9ABB4Bf4e00E4e" }
-      ) {
+      collections(where: { creator: ${account} }) {
         id
         name
         collectionId
         creator
         collectionLink
+        nfts
       }
     }
   `;
-  const { data } = useQuery(GET_myCollections);
-  console.log(data);
-  const onPageLoad = async () => {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
-    // account = await provider.listAccounts();
-    // setCurrentAccount(account[0]);
-  };
 
-  useEffect(async () => {
-    window.scrollTo(0, 0);
-    await onPageLoad();
-    fetchMyCollections();
-  }, [currentAccount]);
-
-  const fetchMyCollections = async () => {
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(
-      collectionAddress,
-      Collection.abi,
-      signer
-    );
-
-    try {
-      const collections = await contract.getCollectionIds(currentAccount);
-      setCollectionList([]);
-      for (let i = 0; i < collections.length; i++) {
-        const collection = await contract.collections(collections[i]);
-        const items = await contract.getItems(collection[0]);
-        const itemCount = items.length;
-        const ipfsLink = collection[3];
-
+  const collectionData = useQuery(GET_myCollections, {
+    onCompleted: (data) => {
+      for (let i = 0; i < data.collections.length; i++) {
         const obj = {
-          id: collection[0],
-          name: collection[1],
-          itemCount: itemCount,
-          creator: collection[2],
+          id: data.collections[i].collectionId,
+          name: data.collections[i].name,
+          itemCount: data.collections[i].nfts.length,
+          creator: data.collections[i].creator,
         };
+
+        const ipfsLink = data.collections[i].collectionLink;
 
         fetch(ipfsLink)
           .then((res) => res.json())
@@ -80,23 +53,29 @@ export const MyCollection = () => {
             });
           });
       }
-    } catch (err) {}
-    try {
-      const NFTs = await contract.getMyNFTs();
-      console.log("MyNFTS", NFTs);
-      console.log(NFTs[0][3]);
-      setNftList([]);
-      for (let i = 0; i <= NFTs.length; i++) {
-        const ipfsLink = await contract.tokenURI(NFTs[i][0]);
+    },
+  });
+  //get Nft Data
+  const GET_Nfts = gql`query{
+    nfts(where:{creator:${account}}){
+     itemId
+     nftName
+     collectionId
+     creator
+     nftLink
+     
+   }
+   }`;
 
+  const myNfts = useQuery(GET_Nfts, {
+    onCompleted: (data) => {
+      for (let i = 0; i < data.nfts.length; i++) {
         const obj = {
-          // collectionId: state.id,
-          id: NFTs[i][0],
-          name: NFTs[i][1],
-          creator: NFTs[i][2],
+          id: data.nfts[i].itemId,
+          name: data.nfts[i].nftName,
+          creator: data.nfts[i].creator,
         };
-        console.log("list nft", obj);
-        console.log(ipfsLink);
+        const ipfsLink = data.nfts[i].nftLink;
         fetch(ipfsLink)
           .then((res) => res.json())
           .then((data) => {
@@ -107,11 +86,83 @@ export const MyCollection = () => {
               return [...old, obj];
             });
           });
-
-        //   console.log("list nft", obj);
       }
-    } catch (err) {}
+    },
+  });
+
+  const onPageLoad = async () => {
+    provider = new ethers.providers.Web3Provider(window.ethereum);
   };
+
+  useEffect(async () => {
+    window.scrollTo(0, 0);
+    // await onPageLoad();
+    // fetchMyCollections();
+  }, [currentAccount]);
+
+  // const fetchMyCollections = async () => {
+  //   const signer = provider.getSigner();
+  //   const contract = new ethers.Contract(
+  //     collectionAddress,
+  //     Collection.abi,
+  //     signer
+  //   );
+
+  // try {
+  //   const collections = await contract.getCollectionIds(currentAccount);
+  //   setCollectionList([]);
+  //   for (let i = 0; i < collections.length; i++) {
+  //     const collection = await contract.collections(collections[i]);
+  //     const items = await contract.getItems(collection[0]);
+  //     const itemCount = items.length;
+  //     const ipfsLink = collection[3];
+
+  //     const obj = {
+  //       id: collection[0],
+  //       name: collection[1],
+  //       itemCount: itemCount,
+  //       creator: collection[2],
+  //     };
+
+  //     fetch(ipfsLink)
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         obj.description = data.description;
+  //         obj.image = data.image;
+  //         setCollectionList((old) => {
+  //           return [...old, obj];
+  //         });
+  //       });
+  //   }
+  // } catch (err) {}
+  // try {
+  //   const NFTs = await contract.getMyNFTs();
+
+  //   setNftList([]);
+  //   for (let i = 0; i <= NFTs.length; i++) {
+  //     const ipfsLink = await contract.tokenURI(NFTs[i][0]);
+
+  //     const obj = {
+  //       id: NFTs[i][0],
+  //       name: NFTs[i][1],
+  //       creator: NFTs[i][2],
+  //     };
+
+  //     fetch(ipfsLink)
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         obj.description = data.description;
+  //         obj.image = data.image;
+  //         obj.collectionId = data.collectionId;
+  //         setNftList((old) => {
+  //           return [...old, obj];
+  //         });
+  //       });
+
+  //   console.log("list nft", obj);
+  //   }
+  // } catch (err) {}
+  // };
 
   window.ethereum.on("accountsChanged", async () => {
     await onPageLoad();
@@ -175,11 +226,3 @@ export const MyCollection = () => {
     </div>
   );
 };
-
-{
-  /* <div className="row row-cols-md-3 gy-3 p-0 m-5">
-        {nftList.map((data, index) => {
-          return <MyNftCard key={index} nftdata={data} />;
-        })}
-      </div> */
-}

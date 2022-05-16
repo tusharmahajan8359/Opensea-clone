@@ -10,6 +10,7 @@ import Collection from "../../artifacts/contracts/CoreCollection.sol/CoreCollect
 import Market from "../../artifacts/contracts/Market.sol/Market.json";
 import { FaOldRepublic } from "react-icons/fa";
 import { AppContext } from "../../App";
+import { gql, useQuery, useLazyQuery } from "@apollo/client";
 // const collectionAddress = "0x2B060e3322D46f275fac3dc00D5c08d307b8906f";
 // const marketAddress = "0x31d4Eb8f7Fb6Bdb23AD92A2eBA9859FB7d19c55b";
 
@@ -21,41 +22,71 @@ const NFTOffer = (props, ref) => {
   let contract;
   let provider;
   let rowCounter = 0;
+
+  //graph query
+  const myTokenId = '"' + props.TOKENID + '"';
+  const GET_Offers = gql`
+    query {
+      offers(where: { tokenId: ${myTokenId} }) {
+        id
+        offerId
+        tokenId
+        offerPrice
+        offerSender
+        status
+      }
+    }
+  `;
+
+  const [getTableData, { data }] = useLazyQuery(GET_Offers);
+
+  console.log(useQuery(GET_Offers));
   useEffect(async () => {
-    await getTableData();
-  }, []);
+    getTableData();
+    if (data) {
+      console.log(data.offers);
+      if (data.offers.length > 0) {
+        setTableVisibility(false);
+      }
+      setOfferList(data.offers);
+    }
+  }, [data]);
 
   useImperativeHandle(
     ref,
     () => ({
       getTable() {
         getTableData();
+        console.log("mydata", data);
       },
     }),
     []
   );
 
-  const getTableData = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    contract = new ethers.Contract(marketAddress, Market.abi, signer);
-    const offers = await contract.getOfferIds(props.TOKENID);
-    setOfferList([]);
-    for (let i = 0; i < offers.length; i++) {
-      const offer = {
-        user: await contract.offerIdToUser(offers[i]),
-        price: await contract.offerIdToPrice(offers[i]),
-        status: await contract.offerStatus(offers[i]),
-        // offerOwner: await contract.offerIdToUser(offers[i])
-      };
-      //   console.log(offer.status);
-      if (offer.status) {
-        setTableVisibility(false);
-      }
+  const getTableData1 = async () => {
+    // const provider = new ethers.providers.Web3Provider(window.ethereum);
+    // const signer = provider.getSigner();
+    // contract = new ethers.Contract(marketAddress, Market.abi, signer);
+    // const offers = await contract.getOfferIds(props.TOKENID);
+    // setOfferList([]);
+    // for (let i = 0; i < offers.length; i++) {
+    //   const offer = {
+    //     user: await contract.offerIdToUser(offers[i]),
+    //     price: await contract.offerIdToPrice(offers[i]),
+    //     status: await contract.offerStatus(offers[i]),
+    //     // offerOwner: await contract.offerIdToUser(offers[i])
+    //   };
+    //   //   console.log(offer.status);
+    //   if (offer.status) {
+    //     setTableVisibility(false);
+    //   }
 
-      setOfferList((old) => [...old, offer]);
+    //   setOfferList((old) => [...old, offer]);
+    // }
+    // rowCounter = 0;
+    if (data) {
+      setOfferList(data.offers);
     }
-    rowCounter = 0;
   };
   const acceptOffer = async (index) => {
     const txt = await props.Contract.acceptOffer(
@@ -64,18 +95,17 @@ const NFTOffer = (props, ref) => {
       collectionAddress
     );
     await txt.wait();
-    getTableData();
+    // getTableData();
   };
   const cancelOffer = async (index) => {
+    console.log("offer id", index);
+    console.log("collection", collectionAddress);
     const txt = await props.Contract.cancelOffer(
       props.TOKENID,
       index,
       collectionAddress
     );
     await txt.wait();
-    getTableData();
-    // const x = await Contract.idToOffers(TOKENID, index)
-    // console.log(await Contract.offerStatus(x))
   };
 
   return (
@@ -112,29 +142,31 @@ const NFTOffer = (props, ref) => {
                   </tr>
                 </thead>
                 <tbody>
+                  {console.log("offer list", offerList[0])}
                   {offerList.map((data, index) => {
                     const price = ethers.utils.formatEther(
-                      "" + JSON.parse(data.price)
+                      "" + JSON.parse(data.offerPrice)
                     );
 
                     if (data.status) {
                       return (
                         <tr key={index}>
-                          <th scope="row">{++rowCounter}</th>
+                          <th scope="row">{index}</th>
                           <td>{price}</td>
-                          <td title={data.user}>
-                            {data.user.slice(0, 4) +
+                          <td title={data.offerSender}>
+                            {data.offerSender.slice(0, 4) +
                               "..." +
-                              data.user.slice(39, 42)}
+                              data.offerSender.slice(39, 42)}
                           </td>
 
                           {props.ifOwner ? (
                             <td>
-                              {currentAccount == data.user.toLowerCase() && (
+                              {currentAccount ==
+                                data.offerSender.toLowerCase() && (
                                 <button
                                   type="button"
                                   className="btn btn-primary"
-                                  onClick={() => cancelOffer(index)}
+                                  onClick={() => cancelOffer(data.offerId)}
                                 >
                                   Cancel Offer
                                 </button>
@@ -145,7 +177,7 @@ const NFTOffer = (props, ref) => {
                               <button
                                 type="button"
                                 className="btn btn-primary"
-                                onClick={() => acceptOffer(index)}
+                                onClick={() => acceptOffer(data.offerId)}
                               >
                                 Accept Offer
                               </button>
