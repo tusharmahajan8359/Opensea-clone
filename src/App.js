@@ -25,7 +25,6 @@ const marketClient = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-// import from './Components/NFT/ViewNft.jsx'
 export const AppContext = createContext(null);
 function App() {
   const [state, setState] = useState({ isConnected: false });
